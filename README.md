@@ -8,3 +8,4 @@
     If this command is missing, then the default orbital quantum number *l* is 3.  
      
      equivalentFeatures.Initial();
+   Once this function had been carried out, the tables for the Clebsch Gordan coefficients and the Winger 3j coefficients were generated. And the data structures for storing the relations between coefficients and variables were generated.
