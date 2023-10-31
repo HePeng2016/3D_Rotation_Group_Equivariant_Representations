@@ -12,3 +12,18 @@
 # Usage
     equivalentFeatures.CtoS_Encode( V1 )
 
+  V1 is the vector that records the multipole moment terms of the multipole expansion in the Cartesian system of coordinates.
+  The order of the terms in this vector is determined by the length of the term, if the terms are equally long, they are ordered according to the lexicographical order. 
+  e.g 
+   *x<y<z*
+   *xx<xy<xz<yy<yz<zz*
+V1 is formated as: 
+N=1 [monopole]
+    [1]
+N=2 [monopole,dipole]
+    [1,x,y,z]
+N=3 [monopole,dipole,quadruple]
+    [1,x,y,z,xx,xy,xz,yy,yz,zz]
+
+   
+
