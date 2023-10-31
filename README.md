@@ -35,7 +35,7 @@ N=3: [monopole,dipole,quadruple]
 
 [1,x,y,z,xx,xy,xz,yy,yz,zz]
 
-The output is a spherical spherical harmonic tensor stored as a complex vector. 
+The output is a spherical harmonic tensor stored as a complex vector.
 
 e.g.
 
@@ -43,6 +43,9 @@ N=2:
 
 [Y(l=0,m=0),Y(l=1,m=-1),Y(l=1,m=0),Y(l=1,m=1),Y(l=2,m=-2),Y(l=2,m=-1),Y(l=2,m=0),Y(l=2,m=1),Y(l=2,m=2)]
 
-   equivalentFeatures.SelfProduct(V1)
+*Y(l,m)* is the spherical multipole moment in the spherical coordinate system. *l* is the orbital quantum number and *m* is the azimuthal quantum number. 
+
+     equivalentFeatures.SelfProduct(V1)
+
 This 
 
