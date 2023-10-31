@@ -25,15 +25,15 @@ V1 is formatted as:
 
 N=1 [monopole]
 
-    [1]
+[1]
     
 N=2 [monopole,dipole]
 
-    [1,x,y,z]
+[1,x,y,z]
     
 N=3 [monopole,dipole,quadruple]
 
-    [1,x,y,z,xx,xy,xz,yy,yz,zz]
+[1,x,y,z,xx,xy,xz,yy,yz,zz]
 
    
 
