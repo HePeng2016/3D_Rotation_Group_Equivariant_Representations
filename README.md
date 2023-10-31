@@ -23,15 +23,15 @@
    
 V1 is formatted as: 
 
-N=1 [monopole]
+N=1: [monopole]
 
 [1]
     
-N=2 [monopole,dipole]
+N=2: [monopole,dipole]
 
 [1,x,y,z]
     
-N=3 [monopole,dipole,quadruple]
+N=3: [monopole,dipole,quadruple]
 
 [1,x,y,z,xx,xy,xz,yy,yz,zz]
 
