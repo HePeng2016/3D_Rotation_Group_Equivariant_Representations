@@ -42,7 +42,7 @@ e.g.
 
 N=2:
 
-*[Y(l=0,m=0),<blue>Y(l=1,m=-1),Y(l=1,m=0),Y(l=1,m=1),</blue>Y(l=2,m=-2),Y(l=2,m=-1),Y(l=2,m=0),Y(l=2,m=1),Y(l=2,m=2)]*
+*[Y(l=0,m=0),<span style="color: green">Y(l=1,m=-1),Y(l=1,m=0),Y(l=1,m=1)</span>,Y(l=2,m=-2),Y(l=2,m=-1),Y(l=2,m=0),Y(l=2,m=1),Y(l=2,m=2)]*
 
 *Y(l,m)* is the term for spherical multipole moment in the spherical coordinate system. *l* is the orbital quantum number and *m* is the azimuthal quantum number. 
 
