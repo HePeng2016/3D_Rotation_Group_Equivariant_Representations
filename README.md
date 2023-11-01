@@ -12,7 +12,8 @@
 # Usage
     equivalentFeatures.CtoS_Encode(*V1*);
 
-  This function changes the cartesian coordination terms to the spherical harmonic coordination terms. 
+  This function changes the cartesian coordination terms to the spherical harmonic tensor terms. 
+  
   *V1* is the vector that records the multipole moment terms of the multipole expansion in the Cartesian system of coordinates.
   The order of the terms in this vector is determined by the length of the term, if the terms are equally long, they are ordered according to the lexicographical order. 
   
@@ -48,5 +49,19 @@ N=2:
 
      equivalentFeatures.SelfProduct(V1)
 
-This 
+This function will change a spherical harmonic tensor to a rotation equivariant embedding vector. 
+e.g. 
 
+    V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
+    V2 =[1.0,0.772027518982468,0.33454525822573616,0.5404192632877276];
+    include("./equivalentFeatures.jl")
+    using  .equivalentFeatures
+    equivalentFeatures.setN(2); 
+    equivalentFeatures.Initial(); 
+    S1 = equivalentFeatures.CtoS_Encode(V1);
+    S2 = equivalentFeatures.CtoS_Encode(V2);
+    E1 = equivalentFeatures.SelfProduct(S1); 
+    E2 = equivalentFeatures.SelfProduct(S2);
+    Loss = sum(abs.(E1 - E2))   
+    
+V1 and V2 are two identical spherical harmonic tensors with different rotations. 
