@@ -462,16 +462,44 @@ module  equivalentFeatures
                      end
                end
 
+               #for I =1:size(WignerPI)[1]
+               #   pseudoInput[I]=(LTm[I,:]'LTm[I,:]).re;
+               #end
+
+               G_inv=LinearAlgebra.pinv(LTm); 
+               return G_inv;
+         end
+
+
+          function ProductEncode(V2,V3)
+
+            LTm =  Complex.(zeros(size(WignerPI)[1],N*N)); 
+            pseudoInput = zeros(size(WignerPI)[1]);
+
+               for I =1:size(WignerPI)[1]
+                  TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                  TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                  J1 = WignerPI[I,1]-1;
+                  J2 = WignerPI[I,2]-1;
+                  J3 = WignerPI[I,3]-1;
+                     for I_1 = 1:length(TempI)
+                        m1 = TempI[I_1].m1;
+                        m2 = TempI[I_1].m2;
+                        m3 = -(m1+m2);
+                        I1 = (J1^2 + m1+J1+1);
+                        I2 = (J2^2 + m2+J2+1);
+                        I3 = (J3^2 + m3+J3+1);
+                        LTm[I,I1] = LTm[I,I1]+V2[I2]*V3[I3]*TempC[I_1];
+                     end
+               end
+
                for I =1:size(WignerPI)[1]
                   pseudoInput[I]=(LTm[I,:]'LTm[I,:]).re;
                end
 
-               G_inv=LinearAlgebra.pinv(LTm); 
-               return pseudoInput,G_inv;
-         end
+               return pseudoInput;
 
-
-
+          end
 
 
 
@@ -517,6 +545,51 @@ module  equivalentFeatures
               G_inv=LinearAlgebra.pinv(LTm); 
               return G_inv;
          end
+
+         function ProductEncode(V2,V3,n)
+
+            VSize = 0;
+            for I in 1:n
+               VSize = VSize +(min((n-1),(n+I-2))-abs(n-I))+1;
+            end
+   
+            LTm =  Complex.(zeros(VSize,2*(n-1)+1)); 
+            pseudoInput = zeros(VSize);
+               Index = 1;  
+               for I =1:size(WignerPI)[1]
+                  if WignerPI[I,1] != n
+                     continue; 
+                  end 
+                  if WignerPI[I,2] > n || WignerPI[I,3] > n 
+                     continue; 
+                  end 
+                  TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                  TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                  J1 = WignerPI[I,1]-1;
+                  J2 = WignerPI[I,2]-1;
+                  J3 = WignerPI[I,3]-1;
+                     for I_1 = 1:length(TempI)
+                        m1 = TempI[I_1].m1;
+                        m2 = TempI[I_1].m2;
+                        m3 = -(m1+m2);
+                        I1 = (m1+J1+1);
+                        I2 = (J2^2 + m2+J2+1);
+                        I3 = (J3^2 + m3+J3+1);
+                        LTm[Index,I1] = LTm[Index,I1]+V2[I2]*V3[I3]*TempC[I_1];
+                     end
+                  Index = Index+1;
+               end
+
+              for I =1:VSize
+                  pseudoInput[I]=(LTm[I,:]'LTm[I,:]).re;
+              end
+              return pseudoInput;
+         end
+
+
+
+
+
    end
 
 
