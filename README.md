@@ -66,9 +66,9 @@ e.g.
     
 V1 and V2 are two identical spherical harmonic tensors with different rotations. 
 
-   equivalentFeatures.W3jProduct(V1,V2,V3) 
+     equivalentFeatures.W3jProduct(V1,V2,V3) 
 
-This function transforms three spherical harmonic tensors into a vector that is invariant to rotation. These three spherical harmonic tensors could be the tensors that represent the density of two nodes with different centres and the tensor that is derived from the subtraction between the coordinates of two nodes.
+This function transforms three spherical harmonic tensors into a vector that is invariant to rotation. These three spherical harmonic tensors could be the tensors that represent the density of two nodes with different centers and the tensor that is derived from the subtraction between the coordinates of two nodes.
 
 
 
