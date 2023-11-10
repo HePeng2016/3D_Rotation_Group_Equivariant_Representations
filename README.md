@@ -3,14 +3,14 @@
      include("./equivalentFeatures.jl")
      using  .equivalentFeatures 
 # Initial
-     equivalentFeatures.setN(*N_new*);
+     equivalentFeatures.setN(N_new);
 *N_new* is the maximum orbital quantum number *l* of the input spherical harmonic representation *Y(lm)*.   
     If this command is missing, then the default maximum orbital quantum number *l* is 3.  
      
      equivalentFeatures.Initial();
    Once this function had been carried out, the tables for the Clebsch Gordan coefficients and the Winger 3j coefficients were generated. And the data structures for storing the relations between coefficients and variables were generated.
 # Usage
-    equivalentFeatures.CtoS_Encode(*V1*);
+    equivalentFeatures.CtoS_Encode(V1);
 
   This function changes the cartesian coordination terms to the spherical harmonic tensor terms. 
   
@@ -19,8 +19,8 @@
   
   e.g.
   
-   *x<y<z*
-   *xx<x*
+   *x<y<z*,
+   *xx<x* ,
    *xx<xy<xz<yy<yz<zz*
    
 *V1* is formatted as: 
