@@ -70,6 +70,16 @@ V1 and V2 are two identical spherical harmonic tensors with different rotations.
 
 This function transforms three spherical harmonic tensors into a vector that is invariant to rotation. These three spherical harmonic tensors could be the tensors that represent the density of two nodes with different centers and the tensor that is derived from the subtraction between the coordinates of two nodes.
 
+      equivalentFeatures.DecodeMatrix(V1,V2)
+      
+This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3).  And the V1,V2 are two other original spherical harmonic tensors.
 
+e.g.
+     W3 = equivalentFeatures.W3jProduct(V1,V2,V3)
+     M  = equivalentFeatures.DecodeMatrix(V1,V2) 
+     norm(M*W3-V3,2);
 
-
+ V1,V2,V3 are three orignal spherical harmonic tensors.
+ W3 is the invariant encoding derived from the W3j product of these three tensors. 
+ M is the matrix that convert the invariant coding (W3) into the original spherical harmonic tensor (V3).
+ 
