@@ -83,4 +83,9 @@ e.g.
  V1,V2,V3 are three orignal spherical harmonic tensors.
  W3 is the invariant encoding derived from the W3j product of these three tensors. 
  M is the matrix that convert the invariant coding (W3) into the original spherical harmonic tensor (V3).
- 
+
+
+      equivalentFeatures.ProductEncode(V1,V2)
+
+
+This function will return the invariant coding of tensor product of two spherical harmonic tensors (V1,V2).
