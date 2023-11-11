@@ -75,9 +75,10 @@ This function transforms three spherical harmonic tensors into a vector that is 
 This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3).  And the V1,V2 are two other original spherical harmonic tensors.
 
 e.g.
-     W3 = equivalentFeatures.W3jProduct(V1,V2,V3)
-     M  = equivalentFeatures.DecodeMatrix(V1,V2) 
-     norm(M*W3-V3,2);
+      
+       W3 = equivalentFeatures.W3jProduct(V1,V2,V3)
+       M  = equivalentFeatures.DecodeMatrix(V1,V2) 
+       norm(M*W3-V3,2);
 
  V1,V2,V3 are three orignal spherical harmonic tensors.
  W3 is the invariant encoding derived from the W3j product of these three tensors. 
