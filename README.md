@@ -89,6 +89,7 @@ e.g.
 
 
 This function will return the invariant coding of the tensor product of two spherical harmonic tensors (V1, V2).
+
 e.g.
 
       V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
