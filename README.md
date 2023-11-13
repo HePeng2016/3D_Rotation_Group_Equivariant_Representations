@@ -72,7 +72,7 @@ This function transforms three spherical harmonic tensors into a vector that is 
 
       equivalentFeatures.DecodeMatrix(V1,V2)
       
-This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3).  And the V1,V2 are two other original spherical harmonic tensors.
+This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3).  And the V1, V2 are two other original spherical harmonic tensors.
 
 e.g.
       
@@ -80,12 +80,24 @@ e.g.
        M  = equivalentFeatures.DecodeMatrix(V1,V2) 
        norm(M*W3-V3,2);
 
- V1,V2,V3 are three orignal spherical harmonic tensors.
+ V1, V2, V3 are three original spherical harmonic tensors.
  W3 is the invariant encoding derived from the W3j product of these three tensors. 
- M is the matrix that convert the invariant coding (W3) into the original spherical harmonic tensor (V3).
+ M is the matrix that converts the invariant coding (W3) into the original spherical harmonic tensor (V3).
 
 
       equivalentFeatures.ProductEncode(V1,V2)
 
 
-This function will return the invariant coding of tensor product of two spherical harmonic tensors (V1,V2).
+This function will return the invariant coding of the tensor product of two spherical harmonic tensors (V1, V2).
+
+      V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
+      V2 =[1.0,0.772027518982468,0.33454525822573616,0.5404192632877276];
+      include("./equivalentFeatures.jl")
+      using  .equivalentFeatures
+      equivalentFeatures.setN(2); 
+      equivalentFeatures.Initial();
+      S1 = equivalentFeatures.CtoS_Encode(V1);
+      S2 = equivalentFeatures.CtoS_Encode(V2);
+      equivalentFeatures.ProductEncode(S1,S2);
+
+     
