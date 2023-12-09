@@ -1,4 +1,5 @@
 # Introduction
+     This software package is used to represent the spherical harmonic tensors in a rotation equivariant way.   
 # Installation
      include("./equivalentFeatures.jl")
      using  .equivalentFeatures 
