@@ -274,6 +274,39 @@ module  equivalentFeatures
              return RInvariantV;
          end
 
+         function SelfProduct(V,n)
+             size__ = 0; 
+          
+             for I in 1:size(SelfPI)[1]    
+                if (equivalentFeatures.SelfPI[I,1]<= n && equivalentFeatures.SelfPI[I,2]<= n)
+                    size__=size__ +1;             
+                end 
+             end
+          
+             RInvariantV = Complex.(zeros(size__));
+             for I =1:size__
+                 
+                 TempI = CGTableI[SelfPI[I,1],SelfPI[I,2],SelfPI[I,3]];
+                 TempC = CGTableC[SelfPI[I,1],SelfPI[I,2],SelfPI[I,3]];
+                 J1 = SelfPI[I,1]-1;
+                 J2 = SelfPI[I,2]-1;
+
+                 for I_1 = 1:length(TempI)
+                   Value = Complex.(0);
+                   for I_2 = 1:length(TempI[I_1])
+                      m1 = TempI[I_1][I_2].m1;
+                      m2 = TempI[I_1][I_2].m2; 
+                      I1 = (J1^2 + m1+J1+1);
+                      I2 = (J2^2 + m2+J2+1);
+                      Value=Value+V[I1]*V[I2]*TempC[I_1][I_2];
+                   end
+                   RInvariantV[I] = RInvariantV[I] + Value*conj(Value);
+                 end 
+             end
+             return RInvariantV;
+         end
+
+
          function  W3jProduct(V1,V2,V3)
              RInvariantV = Complex.(zeros(size(WignerPI)[1]));
 
