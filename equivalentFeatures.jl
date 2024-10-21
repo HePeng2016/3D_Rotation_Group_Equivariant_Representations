@@ -1,3 +1,4 @@
+
 module  equivalentFeatures
 
           using SphericalHarmonicExpansions
@@ -5,7 +6,7 @@ module  equivalentFeatures
           using DataStructures
           using MultivariatePolynomials
           using LinearAlgebra
-          
+          using SphericalHarmonics
 
           struct Index
             m1::Int16
@@ -13,6 +14,7 @@ module  equivalentFeatures
           end
 
           N=3;
+          CTS_Closed = false;# Whether Cartesian to spherical convertion setting is closed     
 
           #CGTableV = fill(Vector{Float64}(undef,0),(d1,d2,d3));
           export CGTableC
@@ -22,10 +24,15 @@ module  equivalentFeatures
           export SelfPI
           export WignerPI
           export CtoS_C
+          export  S_cache
 
           function setN(N_new)
             global N = N_new;
           end 
+
+          function setCTS_Closed( Adjust )
+             global CTS_Closed  = Adjust;
+          end   
 
 
           function Initial()
@@ -33,7 +40,7 @@ module  equivalentFeatures
              d1 = N 
              d2 = N 
              d3 = abs(d1+d2-2)-abs(d1-d2)+1
-
+             global S_cache = SphericalHarmonics.cache(N-1);
              global CGTableC = fill(Vector{ Vector{Float64} }(undef,0),(d1,d2,d3));
              global CGTableI = fill(Vector{ Vector{Index} }(undef,0),(d1,d2,d3));
              
@@ -173,6 +180,10 @@ module  equivalentFeatures
              for I = 1:length(List)
                WignerPI[I,:]=List[I];
              end
+              
+             if CTS_Closed == true 
+                return; 
+             end 
 
              @polyvar x y z
              global CtoS_C = Vector{ Vector{Float64} }(undef,N*N);# Cartesian to spherical
@@ -402,6 +413,76 @@ module  equivalentFeatures
 
             return V3;
          end
+    
+        function  CtoS_Encode( V1,n) 
+      
+            V2 = zeros(length(CtoS_C));
+            Base_ = 0;
+            PreviousLength = 0;  
+            Size_ = 0;
+            Times = 0;   
+
+            for I = 1:length(CtoS_C)
+
+               if length(CtoS_C[I]) != PreviousLength
+                  Base_ = Base_+length(CtoS_C[I]);
+                  PreviousLength = length(CtoS_C[I]);
+                  Times = Times +1;
+               end
+             
+               if Times > n
+                   break;
+               else 
+                   Size_ = Size_ +1;  
+               end 
+  
+               Start = Base_ - length(CtoS_C[I]);
+               for I2 = 1:length(CtoS_C[I])
+                  V2[I] =V2[I]+V1[Start+I2]*CtoS_C[I][I2];
+               end  
+
+
+            end 
+            V3 = Complex.(zeros(Size_));
+
+            for I = 1:n
+               Start = (I-1)*(I-1);
+               for I2 = 1:I
+                 if I2 == I
+                   V3[Start+I2] = V2[Start+I2];
+                 else
+                   V3[Start+I2] = (-V2[Start+I2]*im + V2[Start+2*I-I2])/(2^0.5);
+                   V3[Start+2*I-I2] = ((-1)^(I-I2))*(V2[Start+I2]*im + V2[Start+2*I-I2])/(2^0.5);
+                 end 
+               end 
+            end 
+
+            return V3;
+         end
+
+         function  XYZtoYlm_Encode( Cartesian_ ,n ) 
+               
+           n = n-1; 
+           Vector_Norm1 = (Cartesian_[1].^2 + Cartesian_[2].^2 + Cartesian_[3].^2)^0.5;
+           Angle1 = acos(Cartesian_[3]/Vector_Norm1); 
+           Vector_Norm2 = (Cartesian_[1].^2 + Cartesian_[2].^2)^0.5;
+           Angle2 = acos(Cartesian_[1]/Vector_Norm2); 
+           return computeYlm(Angle1,Angle2,lmax = n)[:,1];
+
+         end 
+
+           function  XYZtoYlm_Encode( Cartesian_ ) 
+               
+           n = N-1; 
+           Vector_Norm1 = (Cartesian_[1].^2 + Cartesian_[2].^2 + Cartesian_[3].^2)^0.5;
+           Angle1 = acos(Cartesian_[3]/Vector_Norm1); 
+           Vector_Norm2 = (Cartesian_[1].^2 + Cartesian_[2].^2)^0.5;
+           Angle2 = acos(Cartesian_[1]/Vector_Norm2); 
+           computePlmcostheta!(S_cache, Angle1,n);
+           return  computeYlm!(S_cache,Angle1,Angle2,n)[:,1];
+
+         end 
+
 
 
          function  CStoRS_Encode( V1 )
@@ -624,5 +705,4 @@ module  equivalentFeatures
 
 
    end
-
 
