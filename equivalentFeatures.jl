@@ -1,4 +1,3 @@
-
 module  equivalentFeatures
 
           using SphericalHarmonicExpansions
@@ -343,6 +342,30 @@ module  equivalentFeatures
          end  
 
 
+           function  W3jProductCToR(InvariantV)
+             RInvariantV = zeros(size(WignerPI)[1]);
+
+             for I =1:size(WignerPI)[1]                
+                RInvariantV[I]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[I]);
+             end 
+             return RInvariantV;
+         end  
+
+
+           function  W3jProductRToC(InvariantV)
+             CInvariantV = Complex.(zeros(size(WignerPI)[1]));
+
+             for I =1:size(WignerPI)[1]                
+                CInvariantV[I]= im^(-WignerPI[I,1]+WignerPI[I,2]+WignerPI[I,3]-1.0)*InvariantV[I];
+             end 
+             return CInvariantV;
+         end  
+
+
+
+
+
+
 
          function  W3jProduct(V1,V2,V3,n)
              
@@ -381,6 +404,180 @@ module  equivalentFeatures
              end 
              return RInvariantV;
          end  
+
+
+function  W3jProductCToR(InvariantV,n)
+             
+            RInvariantVSize = 0;
+
+            for I in 1:n
+               RInvariantVSize = RInvariantVSize +(min((n-1),(n+I-2))-abs(n-I))+1;
+            end
+
+            RInvariantV = zeros(RInvariantVSize);
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if WignerPI[I,1] != n 
+                  continue; 
+               end 
+               if WignerPI[I,2] > n || WignerPI[I,3] > n 
+                  continue; 
+               end 
+                RInvariantV[Index]=real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
+                Index = Index+1;
+             end 
+             return RInvariantV;
+         end  
+
+function  W3jProductRToC(InvariantV,n)
+             
+            CInvariantVSize = 0;
+
+            for I in 1:n
+               CInvariantVSize = CInvariantVSize +(min((n-1),(n+I-2))-abs(n-I))+1;
+            end
+
+            CInvariantV = Complex.(zeros(CInvariantVSize));
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if WignerPI[I,1] != n 
+                  continue; 
+               end 
+               if WignerPI[I,2] > n || WignerPI[I,3] > n 
+                  continue; 
+               end 
+                CInvariantV[Index]=im^(-WignerPI[I,1]+WignerPI[I,2]+WignerPI[I,3]-1.0)*InvariantV[Index];
+                Index = Index+1;
+             end 
+             return CInvariantV;
+         end  
+
+
+function  W3jProductCToR(InvariantV,n)
+             
+            RInvariantVSize = 0;
+
+            for I in 1:n
+               RInvariantVSize = RInvariantVSize +(min((n-1),(n+I-2))-abs(n-I))+1;
+            end
+
+            RInvariantV = zeros(RInvariantVSize);
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if WignerPI[I,1] != n 
+                  continue; 
+               end 
+               if WignerPI[I,2] > n || WignerPI[I,3] > n 
+                  continue; 
+               end 
+                RInvariantV[Index]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
+                Index = Index+1;
+             end 
+             return RInvariantV;
+         end  
+
+
+
+
+function  W3jProduct(V1,V2,V3,n1,n2)
+             
+            RInvariantVSize = 0;
+
+            for I in 1:n2
+               RInvariantVSize = RInvariantVSize +(min((n2-1),(n1+I-2))-abs(n1-I))+1;
+            end
+
+            RInvariantV = Complex.(zeros(RInvariantVSize));
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if WignerPI[I,1] != n1 
+                  if WignerPI[I,1] > n1  
+                     break;
+                  else
+                     continue; 
+                  end 
+               end 
+               if WignerPI[I,2] > n2 || WignerPI[I,3] > n2 
+                  continue; 
+               end 
+                TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                J1 = WignerPI[I,1]-1;
+                J2 = WignerPI[I,2]-1;
+                J3 = WignerPI[I,3]-1;
+                Value = Complex.(0);
+                for I_1 = 1:length(TempI)
+                   m1 = TempI[I_1].m1;
+                   m2 = TempI[I_1].m2;
+                   m3 = -(m1+m2);
+                   I1 = (J1^2 + m1+J1+1);
+                   I2 = (J2^2 + m2+J2+1);
+                   I3 = (J3^2 + m3+J3+1);
+                   Value = Value + V1[I1]*V2[I2]*V3[I3]*TempC[I_1];
+                end
+                RInvariantV[Index]=Value;
+                Index = Index+1;
+             end 
+             return RInvariantV;
+         end  
+
+function  W3jProductCToR(InvariantV,n1,n2)
+             
+            RInvariantVSize = 0;
+
+            for I in 1:n2
+               RInvariantVSize = RInvariantVSize +(min((n2-1),(n1+I-2))-abs(n1-I))+1;
+            end
+
+            RInvariantV = zeros(RInvariantVSize);
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if WignerPI[I,1] != n1 
+                  if WignerPI[I,1] > n1  
+                     break;
+                  else
+                     continue; 
+                  end 
+               end 
+               if WignerPI[I,2] > n2 || WignerPI[I,3] > n2 
+                  continue; 
+               end 
+                RInvariantV[Index]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
+                Index = Index+1;
+             end 
+             return RInvariantV;
+         end  
+
+
+
+function  W3jProductRToC(InvariantV,n1,n2)
+             
+            CInvariantVSize = 0;
+
+            for I in 1:n2
+               CInvariantVSize = CInvariantVSize +(min((n2-1),(n1+I-2))-abs(n1-I))+1;
+            end
+				
+            CInvariantV = Complex.(zeros(CInvariantVSize));
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if WignerPI[I,1] != n1 
+                  if WignerPI[I,1] > n1  
+                     break;
+                  else
+                     continue; 
+                  end 
+               end 
+               if WignerPI[I,2] > n2 || WignerPI[I,3] > n2 
+                  continue; 
+               end 
+                CInvariantV[Index]= im^(-WignerPI[I,1]+WignerPI[I,2]+WignerPI[I,3]-1.0)*InvariantV[Index];
+                Index = Index+1;
+             end 
+             return CInvariantV;
+         end  
+
+
 
          function  CtoS_Encode( V1 ) 
             V2 = zeros(length(CtoS_C));
@@ -466,7 +663,7 @@ module  equivalentFeatures
            Vector_Norm1 = (Cartesian_[1].^2 + Cartesian_[2].^2 + Cartesian_[3].^2)^0.5;
            Angle1 = acos(Cartesian_[3]/Vector_Norm1); 
            Vector_Norm2 = (Cartesian_[1].^2 + Cartesian_[2].^2)^0.5;
-           Angle2 = acos(Cartesian_[1]/Vector_Norm2); 
+           Angle2 = acos(Cartesian_[1]/Vector_Norm2)*(1-2*(Cartesian_[2]<0.0)); 
            return computeYlm(Angle1,Angle2,lmax = n)[:,1];
 
          end 
@@ -477,7 +674,7 @@ module  equivalentFeatures
            Vector_Norm1 = (Cartesian_[1].^2 + Cartesian_[2].^2 + Cartesian_[3].^2)^0.5;
            Angle1 = acos(Cartesian_[3]/Vector_Norm1); 
            Vector_Norm2 = (Cartesian_[1].^2 + Cartesian_[2].^2)^0.5;
-           Angle2 = acos(Cartesian_[1]/Vector_Norm2); 
+           Angle2 = acos(Cartesian_[1]/Vector_Norm2)*(1-2*(Cartesian_[2]<0.0));
            computePlmcostheta!(S_cache, Angle1,n);
            return  computeYlm!(S_cache,Angle1,Angle2,n)[:,1];
 
@@ -659,6 +856,7 @@ module  equivalentFeatures
               G_inv=LinearAlgebra.pinv(LTm); 
               return G_inv;
          end
+
 
          function ProductEncode(V2,V3,n)
 
