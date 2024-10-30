@@ -294,8 +294,11 @@ module  equivalentFeatures
              end
           
              RInvariantV = Complex.(zeros(size__));
-             for I =1:size__
+             Index = 1;
+             for I =1:size(SelfPI)[1]    
                  
+                if (equivalentFeatures.SelfPI[I,1]<= n && equivalentFeatures.SelfPI[I,2]<= n)
+
                  TempI = CGTableI[SelfPI[I,1],SelfPI[I,2],SelfPI[I,3]];
                  TempC = CGTableC[SelfPI[I,1],SelfPI[I,2],SelfPI[I,3]];
                  J1 = SelfPI[I,1]-1;
@@ -310,11 +313,56 @@ module  equivalentFeatures
                       I2 = (J2^2 + m2+J2+1);
                       Value=Value+V[I1]*V[I2]*TempC[I_1][I_2];
                    end
-                   RInvariantV[I] = RInvariantV[I] + Value*conj(Value);
+                   RInvariantV[Index] = RInvariantV[Index] + Value*conj(Value);
                  end 
-             end
+                  Index = Index +1;
+               end 
+            end
              return RInvariantV;
          end
+
+function SelfProductCompact(V,n1,n2)
+
+        size__ = 0; 
+          
+        for I in 1:size(SelfPI)[1]    
+                if (SelfPI[I,1]<= n1 && SelfPI[I,2]<=n1 && SelfPI[I,3]<= SelfPI[I,2] - SelfPI[I,1]+1+n2)
+                    size__=size__ +1;             
+                end 
+        end
+          
+             RInvariantV = Complex.(zeros(size__));
+             Index = 1;
+          for I =1:size(SelfPI)[1]    
+               
+             if (SelfPI[I,1]<= n1 && SelfPI[I,2]<=n1 && SelfPI[I,3]<= SelfPI[I,2] - SelfPI[I,1]+1+n2)
+
+                 TempI = CGTableI[SelfPI[I,1],SelfPI[I,2],SelfPI[I,3]];
+                 TempC = CGTableC[SelfPI[I,1],SelfPI[I,2],SelfPI[I,3]];
+                 J1 = SelfPI[I,1]-1;
+                 J2 = SelfPI[I,2]-1;
+
+                 for I_1 = 1:length(TempI)
+                   Value = Complex.(0);
+                   for I_2 = 1:length(TempI[I_1])
+                      m1 = TempI[I_1][I_2].m1;
+                      m2 = TempI[I_1][I_2].m2; 
+                      I1 = (J1^2 + m1+J1+1);
+                      I2 = (J2^2 + m2+J2+1);
+                      Value=Value+V[I1]*V[I2]*TempC[I_1][I_2];
+                   end
+                   RInvariantV[Index] = RInvariantV[Index] + Value*conj(Value);
+                 end 
+               
+                 Index = Index+1; 
+              end 
+            end
+             return RInvariantV;
+
+
+end        
+
+
 
 
          function  W3jProduct(V1,V2,V3)
@@ -578,6 +626,85 @@ function  W3jProductRToC(InvariantV,n1,n2)
          end  
 
 
+function  W3jProductCompact(V1,V2,V3,n)
+
+     RInvariantVSize = n*n;
+
+      
+            RInvariantV = Complex.(zeros(RInvariantVSize));
+            Index =1;
+            for I =1:size(WignerPI)[1]
+               if  WignerPI[I,1] > n   || WignerPI[I,2] > WignerPI[I,1] || WignerPI[I,3] > WignerPI[I,1]  
+                   continue;
+               end 
+               if (WignerPI[I,2] + WignerPI[I,3]) >= (WignerPI[I,1] +3)  
+                  continue;
+               end 
+
+                TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                J1 = WignerPI[I,1]-1;
+                J2 = WignerPI[I,2]-1;
+                J3 = WignerPI[I,3]-1;
+                Value = Complex.(0);
+                for I_1 = 1:length(TempI)
+                   m1 = TempI[I_1].m1;
+                   m2 = TempI[I_1].m2;
+                   m3 = -(m1+m2);
+                   I1 = (J1^2 + m1+J1+1);
+                   I2 = (J2^2 + m2+J2+1);
+                   I3 = (J3^2 + m3+J3+1);
+                   Value = Value + V1[I1]*V2[I2]*V3[I3]*TempC[I_1];
+                end
+                RInvariantV[Index]=Value;
+                Index = Index+1;
+             end 
+             return RInvariantV;
+end 
+
+function  W3jProductCompactCToR(InvariantV,n)
+   RInvariantVSize = n^2;
+   RInvariantV = Complex.(zeros(RInvariantVSize));
+   Index =1;
+   for I =1:size(WignerPI)[1]
+       if  WignerPI[I,1] > n   || WignerPI[I,2] > WignerPI[I,1] || WignerPI[I,3] > WignerPI[I,1]  
+              continue;
+        end 
+       if (WignerPI[I,2] + WignerPI[I,3]) >= (WignerPI[I,1] +3)  
+              continue;
+        end 
+       
+        RInvariantV[Index]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
+         
+        Index = Index+1;
+   end 
+   return  RInvariantV; 
+end 
+
+
+function  W3jProductCompactRToC(InvariantV,n)
+             
+      CInvariantVSize = n^2;
+			
+      CInvariantV = Complex.(zeros(CInvariantVSize));
+            Index =1;
+             for I =1:size(WignerPI)[1]
+               if  WignerPI[I,1] > n || WignerPI[I,2] > WignerPI[I,1] || WignerPI[I,3] > WignerPI[I,1]  
+                  continue;
+               end 
+               if (WignerPI[I,2] + WignerPI[I,3]) >= (WignerPI[I,1] +3)  
+                  continue;
+               end 
+
+                CInvariantV[Index]= im^(-WignerPI[I,1]+WignerPI[I,2]+WignerPI[I,3]-1.0)*InvariantV[Index];
+                Index = Index+1;
+             end 
+             return CInvariantV;
+end  
+
+
+
+
 
          function  CtoS_Encode( V1 ) 
             V2 = zeros(length(CtoS_C));
@@ -701,7 +828,29 @@ function  W3jProductRToC(InvariantV,n1,n2)
            return V3;
          end
 
-         function  CStoRS_Encode(V1,n)
+
+         function  CStoRS_Encode( V1,n )
+
+            V3 = zeros(length(V1));
+
+            for I = 1:n
+               Start = (I-1)*(I-1);
+               for I2 = 1:I
+                 if I2 == I
+                   V3[Start+I2] = real(V1[Start+I2]);
+                 else
+                   V3[Start+I2]   = ((-1)^(I-I2))*(imag(V1[Start+2*I-I2]))*(2^0.5);
+                   V3[Start+2*I-I2] = ((-1)^(I-I2))*(real(V1[Start+2*I-I2]))*(2^0.5);
+                 end 
+               end 
+           end 
+
+           return V3;
+         end
+
+
+
+         function  CStoRS_Encode_sg(V1,n)
             V3 = zeros(length(V1));
             for I2 = 1:n
                  if I2 == n
@@ -714,7 +863,7 @@ function  W3jProductRToC(InvariantV,n1,n2)
             return V3;
          end
 
-         function  RStoCS_Encode(V1,n)
+         function  RStoCS_Encode_sg(V1,n)
             V3 = Complex.(zeros(length(V1))); 
             for I2 = 1:n
                  if I2 == n
@@ -747,6 +896,24 @@ function  W3jProductRToC(InvariantV,n1,n2)
          end
 
 
+         function  RStoCS_Encode( V1,n )
+
+           V3 = Complex.(zeros(length(V1))); 
+
+           for I = 1:n
+               Start = (I-1)*(I-1);
+               for I2 = 1:I
+                 if I2 == I
+                   V3[Start+I2] = V1[Start+I2];
+                 else
+                   V3[Start+I2]   = (-V1[Start+I2]*im + V1[Start+2*I-I2])/(2^0.5);
+                   V3[Start+2*I-I2] = ((-1)^(I-I2))*(V1[Start+I2]*im + V1[Start+2*I-I2])/(2^0.5);
+                 end 
+               end 
+           end 
+
+           return V3;
+         end
 
 
 
@@ -858,6 +1025,50 @@ function  W3jProductRToC(InvariantV,n1,n2)
          end
 
 
+function DecodeMatrixCompact(V2,V3,n)
+
+            VSize = n^2;
+            
+   
+            LTm =  Complex.(zeros(VSize,VSize)); 
+            # pseudoInput = zeros(VSize);
+               Index = 1;  
+               for I =1:size(WignerPI)[1]
+                  if  WignerPI[I,1] > n   || WignerPI[I,2] > WignerPI[I,1] || WignerPI[I,3] > WignerPI[I,1]  
+                     continue;
+                  end 
+                  if (WignerPI[I,2] + WignerPI[I,3]) >= (WignerPI[I,1] +3)  
+                     continue;
+                  end                   
+                  TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                  TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                  J1 = WignerPI[I,1]-1;
+                  J2 = WignerPI[I,2]-1;
+                  J3 = WignerPI[I,3]-1;
+                     for I_1 = 1:length(TempI)
+                        m1 = TempI[I_1].m1;
+                        m2 = TempI[I_1].m2;
+                        m3 = -(m1+m2);
+                        I1 = (J1^2 + m1+J1+1);
+                        I2 = (J2^2 + m2+J2+1);
+                        I3 = (J3^2 + m3+J3+1);
+                        LTm[Index,I1] = LTm[Index,I1]+V2[I2]*V3[I3]*TempC[I_1];
+                     end
+                  Index = Index+1;
+               end
+
+              #for I =1:VSize
+              #    pseudoInput[I]=(LTm[I,:]'LTm[I,:]).re;
+              #end
+
+              G_inv=LinearAlgebra.pinv(LTm); 
+              return G_inv;
+         end
+
+
+
+
+
          function ProductEncode(V2,V3,n)
 
             VSize = 0;
@@ -897,10 +1108,6 @@ function  W3jProductRToC(InvariantV,n1,n2)
               end
               return pseudoInput;
          end
-
-
-
-
 
    end
 
