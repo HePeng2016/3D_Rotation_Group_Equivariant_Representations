@@ -21,6 +21,7 @@ module  equivalentFeatures
           export W3JTableC
           export W3JTableI
           export SelfPI
+          export SelfPI_test
           export WignerPI
           export CtoS_C
           export  S_cache
@@ -112,16 +113,19 @@ module  equivalentFeatures
 
              dictT = Dict{Index,Float64}();
              empty!(dictT);
-             List = Any[];
+             List  = Any[];
              AlwaysZero=true;
+
+
 
              for J1 = 1:d1
                 for J2 = J1:d2
                    for j3 = (J2-J1):(J1+J2-2)
+                      J3 = j3-(J2-J1)+1;
 
-                      J3 = j3+1;
-                      if J1 == J2
+                     if J1 == J2
                          AlwaysZero=true;
+
                          for I = 1:length(CGTableC[J1,J2,J3])
 
                                   empty!(dictT);
@@ -143,17 +147,18 @@ module  equivalentFeatures
                                      end
                                   end
                          end
-                      end
+                     end
 
-                      if (AlwaysZero != true) && (length(CGTableC[J1,J2,J3])!=0)
+                    if (AlwaysZero != true) && (length(CGTableC[J1,J2,J3])!=0)
                          push!(List,[J1,J2,J3]);
-                      end
+                    end
 
                    end
                 end
              end
 
-             global SelfPI  = Array{Int}(undef,length(List),3);
+             global SelfPI   = Array{Int}(undef,length(List),3);
+
 
              for I = 1:length(List)
                SelfPI[I,:]=List[I];
@@ -323,49 +328,48 @@ module  equivalentFeatures
 
               function SelfProduct(V,n,n2)
 
-                  size__ = 0;
-                  d2 = Int32(floor((length(V))^0.5));
-                  d1 = n;
+                 size__ = 0;
+                 d2 = Int32(floor((length(V))^0.5));
+                 d1 = n;
 
 
-                  for J1 = 1:d1
-                      for J2 = 1:d2
-                                      Begin = maximum([(J1-J2+1),J2,(J2-2*n2+J1)]);
-                                      End   = minimum([J1+J2-1,d2]);
-                                      if (Begin - J2)%2 == J1%2
-                                         Begin = Begin+1;
-                                      end
-                                 for I in Begin:2:End
+                 for J1 = 1:d1
+                      for J2 = max(J1-d2+1,1):min(d2-1+J1,d2)
+                                 Begin = max((J1-J2+1),J2,(J2-n2+J1));
+                                 End   = min(J1+J2-1,d2);
+                   
+                                 for I in Begin:End
+                                      if ((I == J2)&&((J1%2)==0))
+                                          continue;
+                                      end 
                                       size__ = size__ + 1;
                                  end
                        end
-                  end
+                 end
 
                  RInvariantV = zeros(size__);
                  Index = 1;
 
                  for J1 = 1:d1
-                        for J2 = 1:d2
-                                 Begin = maximum([(J1-J2+1),J2,(J2-2*n2+J1)]);
-                                 End   = minimum([J1+J2-1,d2]);
+                      for J2 = max(J1-d2+1,1):min(d2-1+J1,d2)
+                                 Begin = max((J1-J2+1),J2,(J2-n2+J1));
+                                 End   = min(J1+J2-1,d2);
 
-                                 if (Begin - J2)%2 == J1%2
-                                         Begin = Begin+1;
-                                 end
-
-                                 for I in Begin:2:End
+                                 for I in Begin:End
 
                                    j1 = J1-1;
                                    j2 = J2-1;
                                    j3 = I -1;
-               			  J  = j1 -(I-J2)+1;
-                                 #  print( [J1,J2,I]);
-                                 #  print("\n");
-                                    TempI = CGTableI[J2,I,J];
-                                    TempC = CGTableC[J2,I,J];
+               			               J  = j1 -(I-J2)+1;
+                                  #print( [J1,J2,I]);
+                                  #print("\n");
+                                   TempI = CGTableI[J2,I,J];
+                                   TempC = CGTableC[J2,I,J];
+                                   if (((I == J2)&&((J%2)==0)))
+                                        continue;
+                                   end 
 
-
-                                    for I_1 = 1:length(TempI)
+                                   for I_1 = 1:length(TempI)
                                         Value = Complex.(0);
                                       for I_2 = 1:length(TempI[I_1])
                                         m1 = TempI[I_1][I_2].m1;
@@ -553,14 +557,18 @@ module  equivalentFeatures
         function  W3jProduct(V1,V2,V3,n1,n2)
 
                     RInvariantVSize = 0;
+                    d2 = Int32(floor((length(V2))^0.5));
+                    d3 = Int32(floor((length(V3))^0.5));
+                
 
-                    for I in 1:n2
-                       RInvariantVSize = RInvariantVSize +(min((n2-1),(n1+I-2))-abs(n1-I))+1;
+
+                    for I in 1:d2
+                       RInvariantVSize = RInvariantVSize + max(min((d3-1),(n1+I-2))-abs(n1-I)+1,0) -  max(0, min(I+n1-n2-1,min((d3-1),(n1+I-2))+1) - max(I+n2-n1+1,abs(n1-I)+1)+1);
                     end
 
                     RInvariantV = Complex.(zeros(RInvariantVSize));
                     Index =1;
-                     for I =1:size(WignerPI)[1]
+                    for I =1:size(WignerPI)[1]
                        if WignerPI[I,1] != n1
                           if WignerPI[I,1] > n1
                              break;
@@ -568,15 +576,21 @@ module  equivalentFeatures
                              continue;
                           end
                        end
-                       if WignerPI[I,2] > n2 || WignerPI[I,3] > n2
+                       if  WignerPI[I,1] > abs(WignerPI[I,2]-WignerPI[I,3])+n2 
+                          continue; 
+                       end 
+                       if WignerPI[I,2] > d2 || WignerPI[I,3] > d3
                           continue;
                        end
-                        TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
-                        TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
-                        J1 = WignerPI[I,1]-1;
-                        J2 = WignerPI[I,2]-1;
-                        J3 = WignerPI[I,3]-1;
-                        Value = Complex.(0);
+                       print([WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]]);
+                       print("\n");
+
+                       TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                       TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
+                       J1 = WignerPI[I,1]-1;
+                       J2 = WignerPI[I,2]-1;
+                       J3 = WignerPI[I,3]-1;
+                       Value = Complex.(0);
                         for I_1 = 1:length(TempI)
                            m1 = TempI[I_1].m1;
                            m2 = TempI[I_1].m2;
@@ -592,12 +606,12 @@ module  equivalentFeatures
                      return RInvariantV;
                  end
 
-        function  W3jProductCToR(InvariantV,n1,n2)
+        function  W3jProductCToR(InvariantV,n1,n2,d2,d3)
 
                     RInvariantVSize = 0;
 
-                    for I in 1:n2
-                       RInvariantVSize = RInvariantVSize +(min((n2-1),(n1+I-2))-abs(n1-I))+1;
+                    for I in 1:d2
+                       RInvariantVSize = RInvariantVSize + max(min((d3-1),(n1+I-2))-abs(n1-I)+1,0) -  max(0, min(I+n1-n2-1,min((d3-1),(n1+I-2))+1) - max(I+n2-n1+1,abs(n1-I)+1)+1);
                     end
 
                     RInvariantV = zeros(RInvariantVSize);
@@ -610,23 +624,27 @@ module  equivalentFeatures
                              continue;
                           end
                        end
+                       if  WignerPI[I,1] > abs(WignerPI[I,2]-WignerPI[I,3])+n2
+                          continue;
+                       end 
+
                        if WignerPI[I,2] > n2 || WignerPI[I,3] > n2
                           continue;
                        end
-                        RInvariantV[Index]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
-                        Index = Index+1;
+                       RInvariantV[Index]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
+                       Index = Index+1;
                      end
                      return RInvariantV;
                  end
 
 
 
-        function  W3jProductRToC(InvariantV,n1,n2)
+        function  W3jProductRToC(InvariantV,n1,n2,d2,d3)
 
                     CInvariantVSize = 0;
 
-                    for I in 1:n2
-                       CInvariantVSize = CInvariantVSize +(min((n2-1),(n1+I-2))-abs(n1-I))+1;
+                    for I in 1:d2
+                       CInvariantVSize = CInvariantVSize + max(min((d3-1),(n1+I-2))-abs(n1-I)+1,0) -  max(0, min(I+n1-n2-1,min((d3-1),(n1+I-2))+1) - max(I+n2-n1+1,abs(n1-I)+1)+1);
                     end
 
                     CInvariantV = Complex.(zeros(CInvariantVSize));
@@ -639,7 +657,10 @@ module  equivalentFeatures
                              continue;
                           end
                        end
-                       if WignerPI[I,2] > n2 || WignerPI[I,3] > n2
+                       if  WignerPI[I,1] > abs(WignerPI[I,2]-WignerPI[I,3])+n2
+                          continue;
+                       end 
+                       if WignerPI[I,2] > d2 || WignerPI[I,3] > d3
                           continue;
                        end
                         CInvariantV[Index]= im^(-WignerPI[I,1]+WignerPI[I,2]+WignerPI[I,3]-1.0)*InvariantV[Index];
@@ -964,35 +985,51 @@ module  equivalentFeatures
          end
 
 
-          function ProductEncode(V2,V3)
+          function ProductEncode(V1,V2)
 
-            LTm =  Complex.(zeros(size(WignerPI)[1],N*N));
-            pseudoInput = zeros(size(WignerPI)[1]);
 
-               for I =1:size(WignerPI)[1]
-                  TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
-                  TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
-                  J1 = WignerPI[I,1]-1;
-                  J2 = WignerPI[I,2]-1;
-                  J3 = WignerPI[I,3]-1;
-                     for I_1 = 1:length(TempI)
-                        m1 = TempI[I_1].m1;
-                        m2 = TempI[I_1].m2;
-                        m3 = -(m1+m2);
-                        I1 = (J1^2 + m1+J1+1);
-                        I2 = (J2^2 + m2+J2+1);
-                        I3 = (J3^2 + m3+J3+1);
-                        LTm[I,I1] = LTm[I,I1]+V2[I2]*V3[I3]*TempC[I_1]*((2*J1+1)^0.5*((-1)^(J2-J3-m1)));#wigner3J coefficient to Clebsh-Gordan coefficient;
-                     end
-               end
+            d1 = Int32(floor((length(V1))^0.5));
+            d2 = Int32(floor((length(V2))^0.5));
+            SIZE = min((d1+d2-1),N);
+            Base = (abs(d1-d2)*abs(d1-d2));
+            LTm  = Complex.(zeros(1,SIZE*SIZE));
 
-              for I =1:size(WignerPI)[1]
-                  pseudoInput[I]=(LTm[I,:]'LTm[I,:]).re;
-              end
+            LENGTH = 0;
+            for J3 = (abs(d1-d2)+1):min((d1+d2-1),N)  
+              for J1 = max(J3-d2+1,2-J3,1):min(J3+d2-1,d1) 
+                for J2 = max(J3-J1+1,J1-J3+1,1):min(J3+J1-1,d2)
+                  LENGTH = LENGTH+1; 
+                end
+              end 
+            end  
 
-               return pseudoInput;
+            pseudoInput = zeros(LENGTH);
+            I = 1;
+            for J3 = (abs(d1-d2)+1):min((d1+d2-1),N)  
+              for J1 = max(J3-d2+1,2-J3,1):min(J3+d2-1,d1) 
+                for J2 = max(J3-J1+1,J1-J3+1,1):min(J3+J1-1,d2)
+                        TempI = W3JTableI[J1,J2,J3];
+                        TempC = W3JTableC[J1,J2,J3];
+                        for I_1 = 1:length(TempI)
+                           m1 = TempI[I_1].m1;
+                           m2 = TempI[I_1].m2;
+                           m3 = -(m1+m2);
+                           I1 = ((J1-1)^2 + m1+J1);
+                           I2 = ((J2-1)^2 + m2+J2);
+                           I3 = ((J3-1)^2 + m3+J3);
+                           LTm[1,I3-Base] = LTm[1,I3-Base]+V1[I1]*V2[I2]*TempC[I_1]*((2*J3-1)^0.5*((-1)^(J1-J2-m3)));#wigner3J coefficient to Clebsh-Gordan coefficient;
+                        end  
+                        pseudoInput[I]=(LTm[1,:]'LTm[1,:]).re;
+                        I = I+1;                        
+                        LTm.=0.0;
+                  end 
+              end 
+            end 
 
+            return pseudoInput;
           end
+
+
 
 
 
@@ -1002,106 +1039,217 @@ module  equivalentFeatures
              d1 = n;
              Max_size = 0;
              size_sum = 0;
-             for J1 = 1:d1
-		            size__ = 0;
-                for J2 = 1:d2
- 			            Begin = maximum([(J1-J2+1),J2,(J2-2*n2+J1)]);
-			            End   = minimum([J1+J2-1,d2]);
-                  if (Begin - J2)%2 == J1%2
-			               Begin = Begin+1;
-                  end
-                  for I in Begin:2:End
-			             #   print( [J1,J2,I]);
-			             #   print("\n");
-			                size__ = size__ + 1;
-		              end
-              end
-              if  size__ > Max_size    
-                    Max_size = size__; 
-              end 
-                
-                size_add =  (size__ - (J1*J1 - (J1-1)*(J1-1)));
-                size_add = size_add >0 ? size_add*(size_add+1)/2 : 0; 
-                size_sum = size__*(size__+1)/2+size_sum-size_add; 
-                
+             size_add = 0; 
+             odd_sum  = 0;
 
+
+             for J1 = 1:d1
+                size__   = 0;
+                size_add = 0;
+                for J2 = max(J1-d2+1,1):min(d2-1+J1,d2)
+                  Begin = max((J1-J2+1),J2,(J2-n2+J1));
+                  End   = min(J1+J2-1,d2);
+                  for I in Begin:End
+                   #   print( [J1,J2,I]);
+                   #   print("\n");
+                      if ((I == J2)&&((J1%2)==0))
+                          continue;
+                      end 
+                      size__ = size__ + 1;
+                  end    
                end
 
-             LTm =  Complex.(zeros(Max_size,d2*d2-(d2-1)*(d2-1)));
-	           Result_ = zeros(Int16(size_sum),1);
-             size_sum = 1; 
+               if ( Max_size <  size__ ) 
+                    Max_size = size__; 
+               end 
+               if J1 > 1
+                 size_sum = size__*(size__+1)/2  + size_sum; 
+               else 
+                 size_sum = size__  + size_sum;
+               end
+            end 
 
-             for J1 = 1:d1
-		            Index = 1;
-                for J2 = 1:d2
- 			             Begin = maximum([(J1-J2+1),J2,(J2-2*n2+J1)]);
-			             End   = minimum( [J1+J2-1,d2]);
-			             if (Begin - J2)%2 == J1%2
-			                 Begin = Begin+1;
-                    end
-                    for I in Begin:2:End
-		                   #print( [J1,J2,I]);
-		                   #print("\n");
+            LTm =  Complex.(zeros(Max_size,d2*d2-(d2-1)*(d2-1)));
+            DiffJ = zeros(d2*d2-(d2-1)*(d2-1),1);
+            Result_ = zeros(Int16(size_sum),1);
+            size_sum = 1; 
+
+
+            for J1 = 1:d1
+                Index = 1;
+                for J2 = max(J1-d2+1,1):min(d2-1+J1,d2)
+                   Begin = max((J1-J2+1),J2,(J2-n2+J1));
+                   End   = min(J1+J2-1,d2);
+
+                   for I in Begin:End
+
                        j1  = J1-1;
                        j2  = J2-1;
                        j3  = I -1;
- 			                 J  = j1 -(I-J2)+1;
-                       TempI = CGTableI[J2,I,J];
-                       TempC = CGTableC[J2,I,J];
-			                 LTm[Index,:] .= 0.0im;
-                       for I_1 = 1:length(TempI)
+                       J   = j1 -(I-J2)+1;
+
+                      if (((I == J2)&&((J%2)==0)))
+                         continue;
+                      end 
+
+                      #print( [J2,I,J]);  
+                      #print("\n");
+
+                      TempI = CGTableI[J2,I,J];
+                      TempC = CGTableC[J2,I,J];
+                      LTm[Index,:] .= 0.0im;
+                      for I_1 = 1:length(TempI)
                           for I_2 = 1:length(TempI[I_1])
                             m1 = TempI[I_1][I_2].m1;
                             m2 = TempI[I_1][I_2].m2;
-				                    m3 = (m1+m2);
+                            m3 = (m1+m2);
                             I1 = (j2^2 + m1+j2+1);
                             I2 = (j3^2 + m2+j3+1);
-				                    I3 = (m3+j1+1);
-                          LTm[Index,I3] = LTm[Index,I3] + V[I1]*V[I2]*TempC[I_1][I_2];
+                            I3 = (m3+j1+1);
+                            LTm[Index,I3] = LTm[Index,I3] + V[I1]*V[I2]*TempC[I_1][I_2];
                          end
                       end
+                          DiffJ[Index] = J;
                           Index = Index+1;
-		               end
+                   end
                 end
-		            if Index >1
+
+                 
+                if Index >1 
+                      Len = J1*J1-(J1-1)*(J1-1);
+
                       for I_3 in 1:(Index-1)
-                           Len = J1*J1-(J1-1)*(J1-1);
-                           for I_2 in I_3:min((Index-1),J1+I_3-1)
-                           Self_Product = LTm[I_3,1:Len]'*LTm[I_2,1:Len];
-                           Result_[size_sum] = real(Self_Product); #print(Self_Product);
-				                   size_sum = size_sum+1;#print("\n");   	
+
+                         if Len > 1 
+                           for I_2 in I_3:(Index-1) #for I_2 in I_3:min((Index-1),J1+I_3-1)
+                           
+                              if ( abs(DiffJ[I_3]-DiffJ[I_2]) != 1 )
+                                Self_Product = LTm[I_3,1:Len]'*LTm[I_2,1:Len]; 
+                                Result_[size_sum] = real(Self_Product);
+                                size_sum = size_sum+1;
+                               end 
+                                #print(abs(DiffJ[I_3]-DiffJ[I_2]));
+                                #print("  "); 
+                                #print(Self_Product);
+                                #print("  ");  
+                                #print("\n");    
+                           end 
+                         else 
+                           Self_Product = LTm[I_3,1:Len]'*LTm[I_3,1:Len];  
+                           Result_[size_sum] = real(Self_Product);
+                           size_sum = size_sum+1;
+                         end 
                       end 
                 end 
-              end 
+
+
              end
-             return Result_;
+             return Result_[1:size_sum-1];
           end
+
+
+
+          function SelfProductMatrix(V,n,n2)
+
+             d2 = Int32(floor((length(V))^0.5));
+             d1 = n;
+             size_sum = 0;
+             size_add = 0; 
+             odd_sum  = 0;
+
+
+             J1 = d1
+             size__   = 0;
+             size_add = 0;
+             for J2 = max(J1-d2+1,1):min(d2-1+J1,d2)
+                Begin = max((J1-J2+1),J2,(J2-n2+J1));
+                End   = min(J1+J2-1,d2);
+                  for I in Begin:End
+                   #   print( [J1,J2,I]);
+                   #   print("\n");
+                      if ((I == J2)&&((J1%2)==0))
+                          continue;
+                      end 
+                      size__ = size__ + 1;
+                end    
+            end
+
+            
+            LTm =  Complex.(zeros(size__,d1*d1-(d1-1)*(d1-1)));
+
+                J1 = d1;
+                Index = 1;
+                for J2 = max(J1-d2+1,1):min(d2-1+J1,d2)
+                   Begin = max((J1-J2+1),J2,(J2-n2+J1));
+                   End   = min(J1+J2-1,d2);
+
+                   for I in Begin:End
+
+                       j1  = J1-1;
+                       j2  = J2-1;
+                       j3  = I -1;
+                       J   = j1+1;
+
+                      if (((I == J2)&&((J%2)==0)))
+                         continue;
+                      end 
+
+                      #print( [J2,I,J]);  
+                      #print("\n");
+
+                      TempI = W3JTableI[J2,I,J];
+                      TempC = W3JTableC[J2,I,J];
+                      LTm[Index,:] .= 0.0im;
+                      for I_1 = 1:length(TempI)
+                            m1 = TempI[I_1].m1;
+                            m2 = TempI[I_1].m2;
+                            m3 = (m1+m2);
+                            I1 = (j2^2 + m1+j2+1);
+                            I2 = (j3^2 + m2+j3+1);
+                            I3 = (m3+j1+1);
+                            LTm[Index,I3] = LTm[Index,I3] + V[I1]*V[I2]*TempC[I_1];
+                      end
+                          Index = Index+1;
+                   end
+                end
+             
+             return LTm;
+          end
+
+
+
+
+
+
+
+
+
 
          # length of V >=4
          # According to the recursion of Associated Legendre Functions
          # P_n+1 = ((2n+1)/(n+1)) * (sqrt((2n+3)/(2n+1))Cos*P_n - (n/n+1)*sqrt((2n+3)/(2n-1))P_n-1
          # P_n+1^(m+1) = 2CosP_n^(m+1)(sqrt((2*n+3)/(2*n+1))sqrt((n-m)/(n+m+2))  ) - P_n-1^(m+1)sqrt((2*n+3)/(2*n-1))sqrt(((n-m)(n-m-1))/((n+m+2)(n+m+1)))+ (2m+1)P_n^m*Sin*(-1)^m*sqrt((2*n+3)/(2*n+1))*sqrt(1/((n+m+2)(n+m+1)))
          function IncreaseOrder(V,n)
-		         N  = length(V);
+		     N  = length(V);
              N  = Int16(N^0.5);
              N_new = (N+n);
              J0 = 1;
 
              V3 = Complex.(zeros(N_new*N_new));
-		         V3[1:N*N] = V[1:N*N];
+		     V3[1:N*N] = V[1:N*N];
 
-             Cos =    V3[J0^2+J0+1]*2.046653415892977;#2*sqrt(pi/3);
+             Cos    = V3[J0^2+J0+1]*2.046653415892977;#2*sqrt(pi/3);
              Sina_h = V3[J0^2+J0+1+1]*2.8944050182330705; #2*(sqrt(2*pi/3));
-		         Sina_l = V3[J0^2+J0+1-1]*2.8944050182330705; #2*(sqrt(2*pi/3));
+		     Sina_l = V3[J0^2+J0+1-1]*2.8944050182330705; #2*(sqrt(2*pi/3));
 
             for I__ in 1:n
-	            J3    = (N-1+I__);
+	          J3 = (N-1+I__);
               J1 = J3-1;
               J2 = J3-2;
-		          m1    = 0;
-              m2    = 0;
-              m3    = 0;
-		          I1 = (J1^2 + m1+J1+1);
+		      m1 = 0;
+              m2 = 0;
+              m3 = 0;
+		      I1 = (J1^2 + m1+J1+1);
               I2 = (J2^2 + m2+J2+1);
               I3 = (J3^2 + m3+J3+1);
               V3[I3] = ((2*J1+1)/(J1+1))*sqrt((2*J1+3)/(2*J1+1))*Cos*V3[I1]-((J1)/(J1+1))*sqrt((2*J1+3)/(2*J1-1))*V3[I2];
@@ -1109,34 +1257,34 @@ module  equivalentFeatures
             for m in 0:J1
 		          m3 = m+1;
 		          m1 = m+1;
-              m2 = m+1;
+                  m2 = m+1;
 
 		          I1 = (J1^2 + m1+J1+1);
-              I2 = (J2^2 + m2+J2+1);
-              I3 = (J3^2 + m3+J3+1);
-              Im = (J1^2 + m +J1+1);
+                  I2 = (J2^2 + m2+J2+1);
+                  I3 = (J3^2 + m3+J3+1);
+                  Im = (J1^2 + m +J1+1);
 
              if m2 <= J2
  		            V3[I3] = 2*Cos*sqrt(((2*J1+3)/(2*J1+1))*((J1-m)/(J1+m+2)))*V3[I1] - sqrt(((2*J1+3)/(2*J1-1))*(((J1-m)*(J1-m-1))/((J1+m+2)*(J1+m+1))))*V3[I2];
- 		elseif m1 <= J1
+ 		     elseif m1 <= J1
  		            V3[I3] = 2*Cos*sqrt(((2*J1+3)/(2*J1+1))*((J1-m)/(J1+m+2)))*V3[I1];
              end
                 V3[I3] = V3[I3] + sqrt(((2*J1+3)/(2*J1+1))*(1/((J1+m+2)*(J1+m+1))))*(2*m+1)*V3[Im]*Sina_h;
 
 
-   		       I1 = (J1^2 - m1+J1+1);
+   		     I1 = (J1^2 - m1+J1+1);
              I2 = (J2^2 - m2+J2+1);
              I3 = (J3^2 - m3+J3+1);
              Im = (J1^2 - m +J1+1);
 
-              if m2 <= J2
+             if m2 <= J2
  		            V3[I3] = 2*Cos*sqrt(((2*J1+3)/(2*J1+1))*((J1-m)/(J1+m+2)))*V3[I1] - sqrt(((2*J1+3)/(2*J1-1))*(((J1-m)*(J1-m-1))/((J1+m+2)*(J1+m+1))))*V3[I2];
- 		elseif m1 <= J1
+ 		     elseif m1 <= J1
  		            V3[I3] = 2*Cos*sqrt(((2*J1+3)/(2*J1+1))*((J1-m)/(J1+m+2)))*V3[I1];
              end
                 V3[I3] = V3[I3] + sqrt(((2*J1+3)/(2*J1+1))*(1/((J1+m+2)*(J1+m+1))))*(2*m+1)*V3[Im]*Sina_l;
-              end
-            end
+             end
+           end
 
               return  V3;
            end
@@ -1264,47 +1412,201 @@ function DecodeMatrixCompact(V2,V3,n)
 
 
 
-         function ProductEncode(V2,V3,n)
+          function ProductEncode(V1,V2,n)
 
-            VSize = 0;
-            for I in 1:n
-               VSize = VSize +(min((n-1),(n+I-2))-abs(n-I))+1;
-            end
 
-            LTm =  Complex.(zeros(VSize,2*(n-1)+1));
-            pseudoInput = zeros(VSize);
-               Index = 1;
-               for I =1:size(WignerPI)[1]
-                  if WignerPI[I,1] != n
-                     continue;
-                  end
-                  if WignerPI[I,2] > n || WignerPI[I,3] > n
-                     continue;
-                  end
-                  TempI = W3JTableI[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
-                  TempC = W3JTableC[WignerPI[I,1],WignerPI[I,2],WignerPI[I,3]];
-                  J1 = WignerPI[I,1]-1;
-                  J2 = WignerPI[I,2]-1;
-                  J3 = WignerPI[I,3]-1;
-                     for I_1 = 1:length(TempI)
-                        m1 = TempI[I_1].m1;
-                        m2 = TempI[I_1].m2;
-                        m3 = -(m1+m2);
-                        I1 = (m1+J1+1);
-                        I2 = (J2^2 + m2+J2+1);
-                        I3 = (J3^2 + m3+J3+1);
-                        LTm[Index,I1] = LTm[Index,I1]+V2[I2]*V3[I3]*TempC[I_1]*((2*J1+1)^0.5*((-1)^(J2-J3-m1)));#wigner3J coefficient to Clebsh-Gordan coefficient
-                     end
-                  Index = Index+1;
-               end
+            d1 = Int32(floor((length(V1))^0.5));
+            d2 = Int32(floor((length(V2))^0.5));
+            SIZE = min((d1+d2-1),N);
+            BASE = ((abs(d1-d2))*(abs(d1-d2)));
+            LTm  = Complex.(zeros(1,SIZE*SIZE));
 
-              for I =1:VSize
-                  pseudoInput[I]=(LTm[I,:]'LTm[I,:]).re;
+            LENGTH = 0;
+            for J3 = (abs(d1-d2)+1):min((d1+d2-1),N)  
+              for J1 = max(J3-d2+1,1):min(J3+d2-1,d1) 
+                for J2 = max(J3-J1+1,J1-J3+1,1):min(J3+J1-1,d2)
+                 
+                  if  J3 > abs(J1-J2) + n
+                      J2 = max(J2,J1 + N - n -1);
+                      if J2 > min(J3+J1-1,d2)
+                         break; 
+                      end 
+                      continue; 
+                  end 
+                  LENGTH = LENGTH+1;
+                  print( [J1,J2,J3]); 
+                  print("\n");
+                end
+              end 
+            end  
+
+            pseudoInput = zeros(LENGTH);
+            I = 1;
+            for J3 = (abs(d1-d2)+1):min((d1+d2-1),N)  
+              BASE  = (J3-1)*(J3-1);
+              for J1 = max(J3-d2+1,1):min(J3+d2-1,d1) 
+                for J2 = max(J3-J1+1,J1-J3+1,1):min(J3+J1-1,d2)
+                 
+                        if  J3 > abs(J1-J2) + n
+                            J2 = max(J2,J1 + N - n-1);
+                            if J2 > min(J3+J1-1,d2)
+                               break; 
+                            end 
+                            continue; 
+                        end 
+
+                        TempI = W3JTableI[J1,J2,J3];
+                        TempC = W3JTableC[J1,J2,J3];
+                        for I_1 = 1:length(TempI)
+                           m1 = TempI[I_1].m1;
+                           m2 = TempI[I_1].m2;
+                           m3 = -(m1+m2);
+                           I1 = ((J1-1)^2 + m1+J1);
+                           I2 = ((J2-1)^2 + m2+J2);
+                           I3 = ((J3-1)^2 + m3+J3);
+                           LTm[1,I3-BASE] = LTm[1,I3-BASE]+V1[I1]*V2[I2]*TempC[I_1]*((2*J3-1)^0.5*((-1)^(J1-J2-m3)));#wigner3J coefficient to Clebsh-Gordan coefficient;
+                        end  
+                        pseudoInput[I]=(LTm[1,:]'LTm[1,:]).re;
+                        I = I+1;                        
+                        LTm.=0.0;
+                  end 
+              end 
+            end 
+
+            return pseudoInput;
+          end
+
+
+
+
+          function ProductEncodePairwise(V1,V2,n)
+
+
+            d1 = Int32(floor((length(V1))^0.5));
+            d2 = Int32(floor((length(V2))^0.5));
+            SIZE = min((d1+d2-1),N);
+            size__   = 0;
+            Max_size = 0; 
+            size_sum = 1; 
+            LENGTH =   0;
+
+
+
+            for J3 = (abs(d1-d2)+1):min((d1+d2-1),N)  
+              size__   = 0;
+              for J1 = max(J3-d2+1,1):min(J3+d2-1,d1) 
+                for J2 = max(J3-J1+1,J1-J3+1,1):min(J3+J1-1,d2)
+
+                  if  J3 > abs(J1-J2) + n
+                      J2 = max(J2,J1 + N - n -1);
+                      if J2 > min(J3+J1-1,d2)
+                        break; 
+                      end  
+                      continue; 
+                  end 
+
+                  size__ = size__ + 1;
+                  print( [J1,J2,J3]); 
+                  print("\n");
+                end
+              end 
+              if ( Max_size <  size__ ) 
+                  Max_size = size__; 
+              end 
+              if J3 > 1
+                 LENGTH = Int32(size__*(size__+1)/2)  + LENGTH; 
+              else 
+                 LENGTH = size__  + LENGTH;
               end
-              return pseudoInput;
-         end
+              if (J3 == 2)&&(size__>2)  
+                 LENGTH = LENGTH - 2; 
+              end 
+            end  
+
+            LTm =  Complex.(zeros(Max_size,SIZE*SIZE));
+            DiffJ = zeros(1,Max_size);
+            pseudoInput = zeros(LENGTH);
+            
+
+            I = 1;
+            for J3 = (abs(d1-d2)+1):min((d1+d2-1),N)
+              Index = 1;  
+              BASE  = (J3-1)*(J3-1);
+              for J1 = max(J3-d2+1,1):min(J3+d2-1,d1) 
+                for J2 = max(J3-J1+1,J1-J3+1,1):min(J3+J1-1,d2)
+
+         
+                  if  J3 > abs(J1-J2) + n
+                      J2 = max(J2,J1 + N - n -1);
+                      if J2 > min(J3+J1-1,d2)
+                        break; 
+                      end  
+                      continue; 
+                  end 
+
+
+                        TempI = W3JTableI[J1,J2,J3];
+                        TempC = W3JTableC[J1,J2,J3];
+                        for I_1 = 1:length(TempI)
+                           m1 = TempI[I_1].m1;
+                           m2 = TempI[I_1].m2;
+                           m3 = -(m1+m2);
+                           I1 = ((J1-1)^2 + m1+J1);
+                           I2 = ((J2-1)^2 + m2+J2);
+                           I3 = ((J3-1)^2 + m3+J3);
+                           LTm[Index,I3-BASE] = LTm[Index,I3-BASE]+V1[I1]*V2[I2]*TempC[I_1]*((2*J3-1)^0.5*((-1)^(J1-J2-m3)));#wigner3J coefficient to Clebsh-Gordan coefficient;   
+                        end  
+                        DiffJ[Index]= abs(J1-J2); 
+                        Index = Index+1;
+                        I = I+1;                        
+                  end 
+              end 
+                
+                if Index >1 
+                      Len = J3*J3-(J3-1)*(J3-1);
+
+                      for I_3 in 1:(Index-1)
+
+                         if Len > 1 
+                          for I_2 in I_3:(Index-1) 
+
+
+                           if !(((I_3 == 2)||(I_3 == 1))&&(I_2 == 3)&&(Len ==3))
+                               Self_Product = LTm[I_3,1:Len]'*LTm[I_2,1:Len]; 
+                               if ( abs(DiffJ[I_3]-DiffJ[I_2]) != 1 ) 
+                                 pseudoInput[size_sum] = real(Self_Product);
+                               else 
+                                 pseudoInput[size_sum] = imag(Self_Product);
+                               end 
+                               size_sum = size_sum+1; 
+                            end 
+                               print(Self_Product); 
+                               print("  ");
+                               print(I_2);
+                               print("  ");
+                               print(I_3);
+                               print("\n");
+                                   
+                          end 
+                         else 
+                               Self_Product = LTm[I_3,1:Len]'*LTm[I_3,1:Len];  
+                               pseudoInput[size_sum] = real(Self_Product);
+                               size_sum = size_sum+1;
+                               print("\n");
+                         end 
+                      end 
+                end 
+                LTm.=0.0;
+            end 
+            return pseudoInput;
+          end
+
+
+
 
    end
+
+
 
 
 
