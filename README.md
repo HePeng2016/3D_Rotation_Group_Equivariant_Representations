@@ -1,6 +1,6 @@
 # Introduction
 
-This software package is used to represent the spherical harmonic tensors in a rotation equivariance or invariance way. This package is implemented in two different versions. One version uses Julia. The other version uses C++. They have the same function.
+This software package is used to represent the spherical harmonic tensors in a rotation equivariance or invariance way. This package is implemented in two different versions. One version uses Julia. The other version uses C++. They have the same functions.
 # Installation (julia)
      include("./equivalentFeatures.jl")
      using  .equivalentFeatures 
@@ -126,4 +126,7 @@ e.g.
         CC = g++  -std=c++11  -g  -I include 
         $(CC)  -o rotation yourproject.cpp $(objects)
   
-   
+# Usage   
+
+    std::vector<double> SelfProduct(const std::vector<std::complex<double>>& V, int n, int n2); 
+    
