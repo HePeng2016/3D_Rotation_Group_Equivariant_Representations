@@ -132,13 +132,15 @@ e.g.
  V is a spherical harmonic tensor to be encoded. 
  Two shells of V will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensors,The maximum degree of spherical harmonic tensors in this set is n, and the maximum size of the set is n2. The norm of each spherical harmonic tensor from this set derived from the shells (CG) production of V is calculated as return.  
  
-   std::vector<double> SelfProductPairwise(const std::vector<std::complex<double>>& V, int n, int n2);
+    std::vector<double> SelfProductPairwise(const std::vector<std::complex<double>>& V, int n, int n2);
+   
  V is a spherical harmonic tensor to be encoded. 
  Two shells of V will be  Clebsch–Gordan (CG)  producted to generate a set of spherical harmonic tensors, the maximum degree of spherical harmonic tensors in this set is n, and the maximum size of the set is n2. For this set derived from the shells (CG) production of V, the norm of each spherical harmonic tensor and the product of two spherical harmonic tensors are caculated as return. 
 
  
-   std::vector<std::complex<double>> W3jProduct(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2,const std::vector<std::complex<double>>& V3,int n1, int n2); 
-    V1, V2, V3 are spherical harmonic tensors to be encoded with wigner 3J. Only shell n1 for V1 is selected, and for three shells wigner production from V1,V2,V3 with degrees s1,s2,s3 satisfied that s1 = n1, and s1 < abs(s2-s3)+n2. 
+    std::vector<std::complex<double>> W3jProduct(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2,const std::vector<std::complex<double>>& V3,int n1, int n2); 
+   
+V1, V2, V3 are spherical harmonic tensors to be encoded with wigner 3J. Only shell n1 for V1 is selected, and for three shells wigner production from V1,V2,V3 with degrees s1,s2,s3 satisfied that s1 = n1, and s1 < abs(s2-s3)+n2. 
 
 
     
