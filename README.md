@@ -108,5 +108,22 @@ e.g.
 
 
    Eigen package is needed for install. 
+
+       cd  include
+       make
    
+   rotation.o will be generated. 
+   
+   In your project file: 
+   
+       #include "include/rotation.h"
+       equivalentFeatures Test; 
+       Test.Initial();
+
+   In your Makefile file: 
+
+        objects = include/rotation.o 
+        CC = g++  -std=c++11  -g  -I include 
+        $(CC)  -o rotation yourproject.cpp $(objects)
+  
    
