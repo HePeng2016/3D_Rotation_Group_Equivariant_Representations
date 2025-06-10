@@ -130,7 +130,7 @@ e.g.
 
     std::vector<double> SelfProduct(const std::vector<std::complex<double>>& V, int n, int n2); 
  V is a spherical harmonic tensor to be encoded. 
- Two shells of V will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensors,The maximum degree of spherical harmonic tensors in this set is n, and the maximum size of the set is n2. The norm of each spherical harmonic tensor from this set derived from the shells (CG) production of V is calculated as return.  
+ Two shells of V will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensors,the maximum degree of spherical harmonic tensors in this set is n, and the maximum size of the set is n2. The norm of each spherical harmonic tensor from this set derived from the shells (CG) production of V is calculated as return.  
  
     std::vector<double> SelfProductPairwise(const std::vector<std::complex<double>>& V, int n, int n2);
    
@@ -140,9 +140,33 @@ e.g.
  
     std::vector<std::complex<double>> W3jProduct(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2,const std::vector<std::complex<double>>& V3,int n1, int n2); 
    
-V1, V2, V3 are spherical harmonic tensors to be encoded with wigner 3J. Only shell n1 for V1 is selected, and for three shells wigner production from V1,V2,V3 with degrees s1,s2,s3 satisfied that s1 = n1, and s1 < abs(s2-s3)+n2. 
+V1, V2, V3 are spherical harmonic tensors with different orientation to be encoded with wigner 3J. Only shell n1 for V1 is selected, and for three shells wigner production from V1,V2,V3 with degrees s1,s2,s3 satisfied that s1 = n1, and s1 < abs(s2-s3)+n2. 
 
     std::vector<double> W3jProductCToR(const std::vector<std::complex<double>>& InvariantV, int n1,int d2, int d3, int n2);
 
-The definition of n1 and n2 is the same of W3jProduct, d2,d3 are the dimensions of V2 and V3 that are as inputs of W3jProduct.This funcation will convert the spherical harmonic that is the result of W3jProduct into a real vector. 
+The definition of n1 and n2 is the same of W3jProduct, d2,d3 are the dimensions of V2 and V3 that are as inputs of W3jProduct.This funcation will convert the spherical harmonic tensor that is the result of W3jProduct into a real vector. 
+
+     std::vector<std::complex<double>> W3jProductRToC(const std::vector<double>& InvariantV, int n1,int d2, int d3, int n2);
+
+The definition of n1,n2,d2,d3 is the same of W3jProductCToR, the input is a real vector converted by W3jProductCToR, the output is spherical harmonic tensor that is the same as input of W3jProductCToR. This function is the inverse process of the W3jProductCToR function.
+
+      std::vector<std::complex<double>> W3jProductCompact(const std::vector<std::complex<double>>& V1,const std::vector<std::complex<double>>& V2,const std::vector<std::complex<double>>& V3,int n);
+
+ V1, V2, V3 are spherical harmonic tensors with different orientation to be encoded with wigner 3J.  The length of result of wigner 3j product for these three spherical harmonic should be the same as V1, and this result is a rotation invariance vector. 
+     
+     Eigen::MatrixXcd DecodeMatrixCompact(const std::vector<std::complex<double>>& V2, const std::vector<std::complex<double>>& V3, int n);
+
+V2, V3 are spherical harmonic tensors that are rotational equivariantly same as input of W3jProductCompact. This matrix will return a matrix M.  This matrix will recover an invariance vector yielded by W3jProductCompact into an spherical harmonic tensor that is rotational equivariantly same as the V1 that is the input of W3jProductCompact, the orientation of this spherical harmonic tensor is provied by V2, V3.  
+e.g.
+
+      std::vector<double> V1 = {0.2820947917738782, -0.29294906671981563, 0.34398535815919695, -0.18597669831976563, 0.24933311274303446, -0.4611703555484876, 0.1535728097664055, -0.2927708254824036, -0.11723009694482389};
+      std::vector<double> V2 = {0.2820947917738782, 0.12324306613285871, -0.41829957442835725, 0.220383818192421, 0.12430010752649816, -0.2359278576176394, 0.3780897816045623, -0.42188728105548623, 0.07638145146836267};
+    std::vector<std::complex<double>> V3 = {{0.2820947917738782, 0.0},{-0.08323545825287791, -0.286716367230279},{0.2458934345224644, 0.0},{0.08323545825287791, -0.286716367230279},{-0.24360329182248358, 0.15445613562862262},{-0.09366656951197919, -0.32264781266424436},{-0.07575460360437422, 0.0},{0.09366656951197919, -0.32264781266424436},{-0.24360329182248358, -0.15445613562862262}
+    };
+    std::vector<std::complex<double>> V1_ = {{0.2820947917738782, 0.0},{0.1294158205116877, -0.22846248270670816},{0.3175614797663446, 0.0},{-0.1294158205116877, -0.22846248270670816},{-0.11470689480471548, -0.19135797511692804},{0.18808081324411152, -0.3320259406721129},{0.08429133903919787, 0.0},{-0.18808081324411152, -0.3320259406721129}, {-0.11470689480471548, 0.19135797511692804}
+    };
+    std::vector<std::complex<double>> V2_ = {{0.2820947917738782, 0.0},{-0.11794378575971845, 0.12037014272293214},{-0.42653604644964793, 0.0},{0.11794378575971845, 0.12037014272293214},{-0.0018711923316910401, -0.09188362988533172},{0.23022904373214756, -0.23496534959002102},{0.4056684557059928, 0.0},{-0.23022904373214756, -0.23496534959002102},{-0.0018711923316910401, 0.09188362988533172}
+    };
+    std::vector<std::complex<double>> V3_ = {{0.2820947917738782, 0.0},{-0.04734136912624448, 0.3026803946881253},{0.22587421614524694, 0.0},{0.04734136912624448, 0.3026803946881253},{-0.28921882314977415, -0.09274049507548826},{-0.04893693653854026, 0.3128817678849446},{-0.11318592970238676, 0.0},{0.04893693653854026, 0.3128817678849446},{-0.28921882314977415, 0.09274049507548826}
+    };
 
