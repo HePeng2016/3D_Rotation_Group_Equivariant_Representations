@@ -222,6 +222,7 @@ e.g.
     }
     norm = std::sqrt(norm);
   V1, V2, V3  are same as  V1_, V2_, V3_  in rotation equivalention.  V1 is embedded as rotation invariant vector V__ using V2, V3.  V2_, V3_ generated a auxiliary matrix that can convert invariant vector V__ into a spherical harmonic tensor that is the same as V1_ and rotational equivalent to V1. 
+  
        std::vector<double> W3jProductCompactCToR(const std::vector<std::complex<double>>& InvariantV, int n);
        std::vector<std::complex<double>> W3jProductCompactRToC(const std::vector<double>& InvariantV, int n);
     
