@@ -183,21 +183,21 @@ e.g.
         {-0.07575460360437422, 0.0}, {0.09366656951197919, -0.32264781266424436},
         {-0.24360329182248358, -0.15445613562862262}
     };
-    std::vector<std::complex<double>> V1_ = {
+     std::vector<std::complex<double>> V1_ = {
         {0.2820947917738782, 0.0}, {0.1294158205116877, -0.22846248270670816},
         {0.3175614797663446, 0.0}, {-0.1294158205116877, -0.22846248270670816},
         {-0.11470689480471548, -0.19135797511692804}, {0.18808081324411152, -0.3320259406721129},
         {0.08429133903919787, 0.0}, {-0.18808081324411152, -0.3320259406721129},
         {-0.11470689480471548, 0.19135797511692804}
     };
-   std::vector<std::complex<double>> V2_ = {
+    std::vector<std::complex<double>> V2_ = {
         {0.2820947917738782, 0.0}, {-0.11794378575971845, 0.12037014272293214},
         {-0.42653604644964793, 0.0}, {0.11794378575971845, 0.12037014272293214},
         {-0.0018711923316910401, -0.09188362988533172}, {0.23022904373214756, -0.23496534959002102},
         {0.4056684557059928, 0.0}, {-0.23022904373214756, -0.23496534959002102},
         {-0.0018711923316910401, 0.09188362988533172}
     };
-  std::vector<std::complex<double>> V3_ = {
+     std::vector<std::complex<double>> V3_ = {
         {0.2820947917738782, 0.0}, {-0.04734136912624448, 0.3026803946881253},
         {0.22587421614524694, 0.0}, {0.04734136912624448, 0.3026803946881253},
         {-0.28921882314977415, -0.09274049507548826}, {-0.04893693653854026, 0.3128817678849446},
@@ -221,4 +221,11 @@ e.g.
         norm += (std::pow(result[i] - V1_[i], 2)).real();
     }
     norm = std::sqrt(norm);
+  V1, V2, V3  are same as  V1_, V2_, V3_  in rotation equivalention.  V1 is embedded as rotation invariant vector V__ using V2, V3.  V2_, V3_ generated a auxiliary matrix that can convert invariant vector V__ into a spherical harmonic tensor that is the same as V1_ and rotational equivalent to V1. 
+     std::vector<double> W3jProductCompactCToR(const std::vector<std::complex<double>>& InvariantV, int n);
+     std::vector<std::complex<double>> W3jProductCompactRToC(const std::vector<double>& InvariantV, int n);
+    
+W3jProductCompactRToC will change the result of W3jProductCompact into real vector, and W3jProductCompactRToC will recover the this real vector into original spherical harmonic tensor. 
 
+     std::vector<double> ProductEncode(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2, int n);
+ V1 and V2 are spherical harmonic tensors to be encoded, one shell of V1 and one shell of V2 will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensor, the maximum size of each set is n.  
