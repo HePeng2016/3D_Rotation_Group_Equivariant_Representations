@@ -229,4 +229,9 @@ e.g.
 W3jProductCompactRToC will change the result of W3jProductCompact into real vector, and W3jProductCompactRToC will recover the this real vector into original spherical harmonic tensor. 
 
      std::vector<double> ProductEncode(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2, int n);
- V1 and V2 are spherical harmonic tensors to be encoded, one shell of V1 and one shell of V2 will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensor, the maximum size of each set is n.  
+ V1 and V2 are spherical harmonic tensors to be encoded, one shell of V1 and one shell of V2 will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensor, the maximum size of each set is n, the return is the list for the norm of each spherical harmonic tensors from these sets.    
+
+    std::vector<double> ProductEncodePairwise(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2, int n);
+
+ V1 and V2 are spherical harmonic tensors to be encoded,  one shell of V1 and one shell of V2 will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensor, the maximum size of each set is n, the return is the list for the norm of each spherical harmonic tensors and pairwise products among spherical harmonic tensors from these sets.        
+ 
