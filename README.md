@@ -124,7 +124,7 @@ e.g.
 
         objects = include/rotation.o 
         CC = g++  -std=c++11  -g  -I include 
-        $(CC)  -o rotation yourproject.cpp $(objects)
+        $(CC)  -o yourproject yourproject.cpp $(objects)
   
 # Usage   
     std::vector<std::complex<double>> RStoCS_Encode(const std::vector<double>& V1, int n); 
@@ -149,7 +149,46 @@ V1 is a real spherical harmonic tensor to be converted as a complex spherical ha
    
  V is a spherical harmonic tensor to be encoded. 
  Two shells of V will be  Clebsch–Gordan (CG)  producted to generate a set of spherical harmonic tensors, the maximum degree of spherical harmonic tensors in this set is n, and the maximum size of the set is n2. For this set derived from the shells (CG) production of V, the norm of each spherical harmonic tensor and the product of two spherical harmonic tensors are caculated as return. 
+e.g. 
 
+
+    std::vector<std::complex<double>> V = {
+        {0.8462843753216346, 0.0},
+        {-0.05890595046982487, -0.16671610340719356},
+        {0.1715792182533041, 0.0},
+        {0.05890595046982487, -0.16671610340719356},
+        {-0.2724876460411745, -0.10974244810053088},
+        {-0.5990061628748591, 0.17027506101854945},
+        {0.4559079877665936, 0.0},
+        {0.5990061628748591, 0.17027506101854945},
+        {-0.2724876460411745, 0.10974244810053088}
+    };
+    std::vector<std::complex<double>> V_R = {
+        {0.8462843753216346, 0.0},
+        {-0.035869334374274975, 0.19458805470434914},
+        {0.11689964946194337, 0.0},
+        {0.035869334374274975, 0.19458805470434914},
+        {-0.40579691028618065, -0.3759821000777476},
+        {0.36937292043771863, -0.25410952237718903},
+        {0.37677386504280463, 0.0},
+        {-0.36937292043771863, -0.25410952237718903},
+        {-0.40579691028618065, 0.3759821000777476}
+    };
+    std::vector<double> N1 = Test.SelfProduct(V,2,2);
+    std::vector<double> N2 = Test.SelfProduct(V_R,2,2);
+    double norm = 0.0;
+    for (size_t i = 0; i < N1.size(); ++i) {
+        norm += std::abs(N1[i] - N2[i]);
+    }
+   
+    N1 = Test.SelfProductPairwise(V,2,2);
+    N2 = Test.SelfProductPairwise(V_R,2,2);
+    norm = 0.0;
+    for (size_t i = 0; i < N1.size(); ++i) {
+        norm += std::abs(N1[i] - N2[i]);
+    }
+    
+V is a spherical harmonic vector,  V_R is a rotated spherical harmonic vector for the V spherical harmonic vector. For SelfProduct, SelfProductPairwise functions, V and V_R will yield the same result. 
  
     std::vector<std::complex<double>> W3jProduct(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2,const std::vector<std::complex<double>>& V3,int n1, int n2); 
    
