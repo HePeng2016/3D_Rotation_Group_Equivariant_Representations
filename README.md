@@ -367,5 +367,67 @@ Reference vectors are extracted from input spherical harmonic tensors (V_input) 
 
     std::vector<double> ProductEncodePairwise(const std::vector<std::complex<double>>& V1, const std::vector<std::complex<double>>& V2, int n);
 
- V1 and V2 are spherical harmonic tensors to be encoded,  one shell of V1 and one shell of V2 will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensor, the maximum size of each set is n, the return is the list for the norm of each spherical harmonic tensors and pairwise products among spherical harmonic tensors from these sets.        
+ V1 and V2 are spherical harmonic tensors to be encoded,  one shell of V1 and one shell of V2 will be Clebsch–Gordan (CG) producted to generate a set of spherical harmonic tensor, the maximum size of each set is n, the return is the list for the norm of each spherical harmonic tensors and pairwise products among spherical harmonic tensors from these sets.
+e.g.
+
+
+    std::vector<std::complex<double>> Va = {
+        {0.5641895835477564, 0.0},
+        {0.02432950778305304, 0.12000026382308544},
+        {-0.0743142162691603, 0.0},
+        {-0.02432950778305304, 0.12000026382308544},
+        {-0.028884354218690914, -0.2641985837291535},
+        {-0.5053395933628799, 0.4929228736827938},
+        {0.5316625913709678, 0.0},
+        {0.5053395933628799, 0.4929228736827938},
+        {-0.028884354218690914, 0.2641985837291535}
+    };
+    std::vector<std::complex<double>> Vb = {
+        {0.5641895835477564, 0.0},
+        {-0.21474084277746897, -0.07957009561042702},
+        {0.5898787926816613, 0.0},
+        {0.21474084277746897, -0.07957009561042702},
+        {-0.3264974883313249, -0.021848999166327016},
+        {-0.30068680554417004, 0.003448873026302368},
+        {0.07781820616203128, 0.0},
+        {0.30068680554417004, 0.003448873026302368},
+        {-0.3264974883313249, 0.021848999166327016}
+    };
+    std::vector<std::complex<double>> Va_ = {
+        {0.5641895835477564, 0.0},
+        {0.011472034751969437, -0.1080923399837762},
+        {-0.10897456668330358, 0.0},
+        {-0.011472034751969437, -0.1080923399837762},
+        {-0.11657808713640651, -0.2832416050022595},
+        {0.41830985697625883, -0.5669912902621337},
+        {0.4899597947451914, 0.0},
+        {-0.41830985697625883, -0.5669912902621337},
+        {-0.11657808713640651, 0.2832416050022595}
+    };
+    std::vector<std::complex<double>> Vb_ = {
+        {0.5641895835477564, 0.0},
+        {-0.16528515488596268, 0.4230505374110573},
+        {-0.2006618303044012, 0.0},
+        {0.16528515488596268, 0.4230505374110573},
+        {-0.2910900154814652, -0.1846241249608196},
+        {0.1812921071936071, 0.07791641829492388},
+        {0.29248252600360675, 0.0},
+        {-0.1812921071936071, 0.07791641829492388},
+        {-0.2910900154814652, 0.1846241249608196}
+    };
+    std::vector<double> N1 = Test.ProductEncode(Va,Vb,2);
+    std::vector<double> N2 = Test.ProductEncode(Va_,Vb_,2);
+    double norm = 0.0;
+    for (size_t i = 0; i < N1.size(); ++i) {
+        norm += std::abs(N1[i] - N2[i]);
+    }
+
+    N1 = Test.ProductEncodePairwise(Va,Vb,2);
+    N2 = Test.ProductEncodePairwise(Va_,Vb_,2);
+    norm = 0.0;
+    for (size_t i = 0; i < N1.size(); ++i) {
+        norm += std::abs(N1[i] - N2[i]);
+    }
+
+  Va,Vb are same as Va_,Vb_ in rotational equivariant way,  ProductEncode and ProductEncodePairwise functions are applied in Va,Vb and Va_,Vb_, the same results are yielded. 
  
