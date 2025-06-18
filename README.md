@@ -51,7 +51,16 @@ N=2:
 
      equivalentFeatures.SelfProduct(V1)
 
-This function will change a spherical harmonic tensor to a rotation equivariant embedding vector. 
+This function will change a spherical harmonic tensor to a rotation invariance embedding vector.
+
+     equivalentFeatures.SelfProduct(V1,n,n2)
+     
+For the Clebsch–Gordan (CG) product of any two shells in the V1 spherical harmonic tensor, only top n2  with smaller degree are selected and the maximum degree is n.  
+     
+     equivalentFeatures.SelfProductPairwise(V1,n,n2)
+     
+The definition of n,n2 is the same as SelfProduct function. For the rotation-invariance embedding, both norm and pairwise product are considered. 
+
 e.g. 
 
     V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
@@ -67,7 +76,6 @@ e.g.
     Loss = sum(abs.(E1 - E2))   
     
 V1 and V2 are two identical spherical harmonic tensors with different rotations. 
-
      equivalentFeatures.W3jProduct(V1,V2,V3) 
 
 This function transforms three spherical harmonic tensors into a vector that is invariant to rotation. These three spherical harmonic tensors could be the tensors that represent the density of two nodes with different centers and the tensor that is derived from the subtraction between the coordinates of two nodes.
