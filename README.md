@@ -1,6 +1,6 @@
 # Introduction
 
-This software package is used to represent the spherical harmonic tensors in a rotation equivariance or invariance way. This package is implemented in two different versions. One version uses Julia. The other version uses C++. They have the same functions.
+This software package is used to represent the spherical harmonic tensors in a rotation equivariance or invariance way. The key functions are implemented in two different versions. One version uses Julia. The other version uses C++, they yield the same result. 
 # Installation (julia)
      include("./equivalentFeatures.jl")
      using  .equivalentFeatures 
