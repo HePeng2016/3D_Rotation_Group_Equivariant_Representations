@@ -97,13 +97,13 @@ This function transforms three spherical harmonic tensors into a vector that is 
 
       equivalentFeatures.DecodeMatrix(V1,V2)
       
-This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3).  And the V1, V2 are two other original spherical harmonic tensors.
+This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3). And the V1, V2 are two other original spherical harmonic tensors.
 
 e.g.
       
        W3 = equivalentFeatures.W3jProduct(V1,V2,V3)
-       M  = equivalentFeatures.DecodeMatrix(V1,V2) 
-       norm(M*W3-V3,2);
+       M  = equivalentFeatures.DecodeMatrix(V2,V3) 
+       norm(M*W3-V1,2);
 
  V1, V2, V3 are three original spherical harmonic tensors.
  W3 is the invariant encoding derived from the W3j product of these three tensors. 
@@ -116,7 +116,21 @@ This function transforms three spherical harmonic tensors into a vector that is 
 
      equivalentFeatures.W3jProductCompact(V1,V2,V3,n1)； 
      
-This function transforms three spherical harmonic tensors into a vector that is invariant to rotation，n1 is the maximum degree of V1. this function will give invariance vector with the same length of V1.      
+This function transforms three spherical harmonic tensors into a vector that is invariant to rotation，n1 is the maximum degree of V1. this function will give invariance vector with the same length of V3. 
+   
+     equivalentFeatures.DecodeMatrixCompact(V1,V2,V3,n1); 
+
+This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProductCompact function into one of the original spherical harmonic tensors (V1).  Because the length of V ,therefore this matrix is a square matrix.
+
+
+ e.g.
+
+ 
+   W3 = equivalentFeatures.W3jProductCompact(V1,V2,V3)
+   M  = equivalentFeatures.DecodeMatrixCompact(V2,V3) 
+   norm(M*W3-V1_,2);
+
+The length of V1 is equal to the length of W3.
 
 
       equivalentFeatures.ProductEncode(V1,V2)
