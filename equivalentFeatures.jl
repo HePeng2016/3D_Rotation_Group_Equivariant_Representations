@@ -1229,8 +1229,9 @@ module  equivalentFeatures
          # According to the recursion of Associated Legendre Functions
          # P_n+1 = ((2n+1)/(n+1)) * (sqrt((2n+3)/(2n+1))Cos*P_n - (n/n+1)*sqrt((2n+3)/(2n-1))P_n-1
          # P_n+1^(m+1) = 2CosP_n^(m+1)(sqrt((2*n+3)/(2*n+1))sqrt((n-m)/(n+m+2))  ) - P_n-1^(m+1)sqrt((2*n+3)/(2*n-1))sqrt(((n-m)(n-m-1))/((n+m+2)(n+m+1)))+ (2m+1)P_n^m*Sin*(-1)^m*sqrt((2*n+3)/(2*n+1))*sqrt(1/((n+m+2)(n+m+1)))
-         function IncreaseOrder(V,n)
-		     N  = length(V);
+         function IncreaseDegree(V,n)
+	
+	     N  = length(V);
              N  = Int16(N^0.5);
              N_new = (N+n);
              J0 = 1;
