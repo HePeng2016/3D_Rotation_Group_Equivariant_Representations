@@ -34,7 +34,6 @@ class equivalentFeatures
     std::vector<double> CStoRS_Encode(const std::vector<std::complex<double>>& V1, int n);
     std::vector<std::complex<double>> RStoCS_Encode(const std::vector<double>& V1, int n);
     std::vector<std::complex<double>> IncreaseDegree(const std::vector<std::complex<double>>& V, int n);
-    std::vector<std::vector<double>> ReferencesExtract(const  std::vector<std::complex<double>>& V);
     std::vector<double> SelfProduct(const std::vector<std::complex<double>>& V, int n, int n2);
     std::vector<std::complex<double>> W3jProduct(const std::vector<std::complex<double>>& V1,
     const std::vector<std::complex<double>>& V2,const std::vector<std::complex<double>>& V3,int n1, int n2);
