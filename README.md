@@ -47,14 +47,18 @@ N=2:
 
 *[Y(l=0,m=0),Y(l=1,m=-1),Y(l=1,m=0),Y(l=1,m=1),Y(l=2,m=-2),Y(l=2,m=-1),Y(l=2,m=0),Y(l=2,m=1),Y(l=2,m=2)]*
 
-*Y(l,m)* is the term for spherical multipole moment in the spherical coordinate system. *l* is the orbital quantum number and *m* is the azimuthal quantum number. 
+*Y(l,m)* is the term for spherical multipole moment in the spherical coordinate system. *l* is the orbital quantum number and *m* is the azimuthal quantum number.
+
+     equivalentFeatures.IncreaseDegree(S2,n);
+     
+This function will increase the degree of spherical harmonic tensor by n, S2 should be a [monopole,dipole] spherical harmonic tensor. 
 
      equivalentFeatures.SelfProduct(V1)
 
 This function will change a spherical harmonic tensor to a rotation invariance embedding vector.
 
      equivalentFeatures.SelfProduct(V1,n,n2)
-     
+
 For the Clebsch–Gordan (CG) product of any two shells in the V1 spherical harmonic tensor, only top n2  with smaller degree are selected and the maximum degree is n.  
      
      equivalentFeatures.SelfProductPairwise(V1,n,n2)
@@ -63,17 +67,28 @@ The definition of n,n2 is the same as SelfProduct function. For the rotation-inv
 
 e.g. 
 
-    V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
-    V2 =[1.0,0.772027518982468,0.33454525822573616,0.5404192632877276];
-    include("./equivalentFeatures.jl")
-    using  .equivalentFeatures
-    equivalentFeatures.setN(2); 
-    equivalentFeatures.Initial(); 
-    S1 = equivalentFeatures.CtoS_Encode(V1);
-    S2 = equivalentFeatures.CtoS_Encode(V2);
-    E1 = equivalentFeatures.SelfProduct(S1); 
-    E2 = equivalentFeatures.SelfProduct(S2);
-    Loss = sum(abs.(E1 - E2))   
+      include("./equivalentFeatures.jl")
+      using  .equivalentFeatures
+      equivalentFeatures.Initial();  
+
+      V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
+      V2 =[1.0,0.772027518982468,0.33454525822573616,0.5404192632877276];
+      
+      S1 = equivalentFeatures.CtoS_Encode(V1,2);
+      S2 = equivalentFeatures.CtoS_Encode(V2,2);
+      S1 = equivalentFeatures.IncreaseDegree(S1,1);
+      S2 = equivalentFeatures.IncreaseDegree(S2,1);
+      E1 = equivalentFeatures.SelfProduct(S1); 
+      E2 = equivalentFeatures.SelfProduct(S2);
+      Loss = sum(abs.(E1 - E2))
+      E1 = equivalentFeatures.SelfProduct(S1,2,2); 
+      E2 = equivalentFeatures.SelfProduct(S2,2,2);
+      Loss = sum(abs.(E1 - E2))
+      E1 = equivalentFeatures.SelfProductPairwise(S1,2,2);
+      E2 = equivalentFeatures.SelfProductPairwise(S2,2,2);
+      Loss = sum(abs.(E1 - E2)) 
+
+     
     
 V1 and V2 are two identical spherical harmonic tensors with different rotations. 
      equivalentFeatures.W3jProduct(V1,V2,V3) 
@@ -93,6 +108,15 @@ e.g.
  V1, V2, V3 are three original spherical harmonic tensors.
  W3 is the invariant encoding derived from the W3j product of these three tensors. 
  M is the matrix that converts the invariant coding (W3) into the original spherical harmonic tensor (V3).
+ 
+ 
+       equivalentFeatures.W3jProduct(V1,V2,V3,n1,n2); 
+       
+This function transforms three spherical harmonic tensors into a vector that is invariant to rotation, only shell n1 for V1 is selected, and for three shells wigner production from V1,V2,V3 with degrees s1,s2,s3 satisfied that s1 = n1, and s1 < abs(s2-s3)+n2.
+
+     equivalentFeatures.W3jProductCompact(V1,V2,V3,n1)； 
+     
+This function transforms three spherical harmonic tensors into a vector that is invariant to rotation，n1 is the maximum degree of V1. this function will give invariance vector with the same length of V1.      
 
 
       equivalentFeatures.ProductEncode(V1,V2)
