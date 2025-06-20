@@ -91,6 +91,7 @@ e.g.
      
     
 V1 and V2 are two identical spherical harmonic tensors with different rotations. 
+
      equivalentFeatures.W3jProduct(V1,V2,V3) 
 
 This function transforms three spherical harmonic tensors into a vector that is invariant to rotation. These three spherical harmonic tensors could be the tensors that represent the density of two nodes with different centers and the tensor that is derived from the subtraction between the coordinates of two nodes.
@@ -126,12 +127,49 @@ This function will return a matrix that can be used to convert the invariant cod
  e.g.
 
  
-   W3 = equivalentFeatures.W3jProductCompact(V1,V2,V3)
-   M  = equivalentFeatures.DecodeMatrixCompact(V2,V3) 
-   norm(M*W3-V1_,2);
+      W3 = equivalentFeatures.W3jProductCompact(V1,V2,V3)
+      M  = equivalentFeatures.DecodeMatrixCompact(V2,V3) 
+      norm(M*W3-V1_,2);
 
-The length of V1 is equal to the length of W3.
+The length of V1 is equal to the length of W3, therefore M is a square matrix. V2,V3 are two reference vectors. 
 
+      equivalentFeatures.ReferencesExtract(V_input)
+      
+This function will yield two reference vectors from the diople and quadruple shells of V_input. 
+
+    
+      equivalentFeatures.SelfProductMatrix( V_input, int n, int n2);  
+      
+      
+For the Clebsch–Gordan (CG) product of any two shells in the V_input spherical harmonic tensor, only top n2  with smaller degree are selected. The spherial harmonic tensors with degree n are returned.
+
+e.g 
+
+
+      MM =  equivalentFeatures.ReferencesExtract(V_input) 
+      v1 = vcat(1,MM[:,1]); 
+      v2 = vcat(1,MM[:,2]); 
+      v2 = equivalentFeatures.RStoCS_Encode(v2,2);
+      v1 = equivalentFeatures.RStoCS_Encode(v1,2);
+      v1 = equivalentFeatures.IncreaseDegree(v1,1);
+      v2 = equivalentFeatures.IncreaseDegree(v2,1);
+      V_Encode = equivalentFeatures.W3jProductCompact(V_output,v1,v2,3);
+      M = equivalentFeatures.DecodeMatrixCompact(v1,v2,3);
+      norm(M*V_Encode - V_output,2);
+      
+      
+      MM=equivalentFeatures.SelfProductMatrix(V_input,2,2)
+      v1 = vcat(1,MM[:,1]); 
+      v2 = vcat(1,MM[:,2]); 
+      v2 = equivalentFeatures.RStoCS_Encode(v2,2);
+      v1 = equivalentFeatures.RStoCS_Encode(v1,2);
+      v1 = equivalentFeatures.IncreaseDegree(v1,1);
+      v2 = equivalentFeatures.IncreaseDegree(v2,1);
+      V_Encode = equivalentFeatures.W3jProductCompact(V_output,v1,v2,3);
+      M = equivalentFeatures.DecodeMatrixCompact(v1,v2,3);
+      norm(M*V_Encode - V_output,2);
+
+ReferencesExtract,SelfProductMatrix can be used to generate the reference vectors for W3jProductCompact and DecodeMatrixCompact functions. 
 
       equivalentFeatures.ProductEncode(V1,V2)
 
