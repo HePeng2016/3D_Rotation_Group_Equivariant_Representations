@@ -10,7 +10,7 @@ This software package is used to represent the spherical harmonic tensors in a r
     If this command is missing, then the default maximum orbital quantum number *l* is 3.  
      
      equivalentFeatures.Initial();
-   Once this function had been carried out, the tables for the Clebsch Gordan coefficients and the Winger 3j coefficients were generated. And the data structures for storing the relations between coefficients and variables were generated.
+   Once this function had been carried out, the tables for the Clebsch Gordan coefficients and the Wigner 3j coefficients were generated. And the data structures for storing the relations between coefficients and variables were generated.
 # Usage
     equivalentFeatures.CtoS_Encode(V1);
 
