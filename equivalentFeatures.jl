@@ -628,7 +628,7 @@ module  equivalentFeatures
                           continue;
                        end 
 
-                       if WignerPI[I,2] > n2 || WignerPI[I,3] > n2
+                       if WignerPI[I,2] > d2 || WignerPI[I,3] > d3
                           continue;
                        end
                        RInvariantV[Index]= real(im^(WignerPI[I,1]-WignerPI[I,2]-WignerPI[I,3]+1.0)*InvariantV[Index]);
