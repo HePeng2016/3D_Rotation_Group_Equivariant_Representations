@@ -1,3 +1,5 @@
+# Diagram
+![Diagram drawio](https://github.com/user-attachments/assets/64698a5f-1cc9-4c56-8e2b-1519e8dd5841)
 # Introduction
 
 This software package is used to represent the spherical harmonic tensors in a rotation equivariance or invariance way. The key functions are implemented in two different versions. One version uses Julia,the other version uses C++, they yield the same result. 
