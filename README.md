@@ -1,7 +1,7 @@
 # Diagram
 
 
-![figureS drawio](https://github.com/user-attachments/assets/a03d725e-1b88-4928-8118-774b06f2bec5)
+![Image](https://github.com/user-attachments/assets/d8b3a44d-5c61-4f3d-a28f-839e8c362539)
 
 
 # Introduction
