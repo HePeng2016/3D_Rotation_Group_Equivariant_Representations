@@ -107,7 +107,20 @@ This function transforms three spherical harmonic tensors into a vector that is 
 This function will return a matrix that can be used to convert the invariant coding calculated by the W3jProduct function into one of the original spherical harmonic tensors (V3). And the V1, V2 are two other original spherical harmonic tensors.
 
 e.g.
+      using LinearAlgebra
       
+      V1 =[1.0,0.0043477849927746155,0.0,0.9999905483381614,0.11]; 
+      V2 =[1.0,0.772027518982468,0.33454525822573616,0.5404192632877276];
+      V3 =[1.0,0.654676578,0.7654334543987,0.765432216890];
+      
+      V1 = equivalentFeatures.CtoS_Encode(V1,2);
+      V2 = equivalentFeatures.CtoS_Encode(V2,2);
+      V3 = equivalentFeatures.CtoS_Encode(V3,2);
+      
+      V1 = equivalentFeatures.IncreaseDegree(V1,1);
+      V2 = equivalentFeatures.IncreaseDegree(V2,1);
+      V3 = equivalentFeatures.IncreaseDegree(V3,1);  
+       
        W3 = equivalentFeatures.W3jProduct(V1,V2,V3)
        M  = equivalentFeatures.DecodeMatrix(V2,V3) 
        norm(M*W3-V1,2);
@@ -151,7 +164,24 @@ For the Clebsch–Gordan (CG) product of any two shells in the V_input spherical
 
 e.g 
 
+V_input = [ 0.5641895835477564 + 0.0im, 0.02432950778305304+0.12000026382308544im,-0.0743142162691603,
+-0.02432950778305304 + 0.12000026382308544im,
+-0.028884354218690914-0.2641985837291535im,
+-0.5053395933628799+ 0.4929228736827938im,
+ 0.5316625913709678 + 0.0im,
+ 0.5053395933628799+ 0.4929228736827938im,
+-0.028884354218690914+ 0.2641985837291535im]
 
+V_output = [ 0.5641895835477564 + 0.0im,
+0.046180362258809796-0.5151788499369871im,
+0.563454914288809,
+-0.046180362258809796-0.5151788499369871im,
+-0.35831018662719905 -0.036901839488305416im,
+0.09441424373213234-0.6546737533363572im,
+0.008536735434823653+0.0im,
+-0.09441424373213234-0.6546737533363572im,
+-0.35831018662719905+0.036901839488305416im]
+      
       MM =  equivalentFeatures.ReferencesExtract(V_input) 
       v1 = vcat(1,MM[:,1]); 
       v2 = vcat(1,MM[:,2]); 
